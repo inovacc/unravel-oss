@@ -1,0 +1,19 @@
+{
+  "kb_id": "270943e5bc622a72",
+  "dimensions": [
+    {"id": "identity", "name": "Identity", "score": 90},
+    {"id": "filesystem", "name": "Filesystem map", "score": 95},
+    {"id": "binary_surface", "name": "Binary surface", "score": 90},
+    {"id": "source_layer", "name": "Source layer", "score": 90},
+    {"id": "ipc", "name": "IPC", "score": 75},
+    {"id": "api", "name": "API surface", "score": 85},
+    {"id": "wire", "name": "Wire formats", "score": 85},
+    {"id": "storage", "name": "Storage schemas", "score": 90},
+    {"id": "auth", "name": "Auth surface", "score": 80},
+    {"id": "crypto", "name": "Crypto", "score": 85},
+    {"id": "state_machines", "name": "State machines", "score": 80},
+    {"id": "behavior", "name": "Behavior", "score": 85}
+  ],
+  "coverage": 11,
+  "citations_ok": true
+}

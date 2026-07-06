@@ -1,0 +1,9 @@
+[
+  {"version":"go1.22.5","stable":true,"files":[
+    {"filename":"go1.22.5.src.tar.gz","os":"","arch":"","version":"go1.22.5","sha256":"aaa","size":27000000,"kind":"source"},
+    {"filename":"go1.22.5.linux-amd64.tar.gz","os":"linux","arch":"amd64","version":"go1.22.5","sha256":"bbb","size":68000000,"kind":"archive"}
+  ]},
+  {"version":"go1.21rc1","stable":false,"files":[
+    {"filename":"go1.21rc1.src.tar.gz","os":"","arch":"","version":"go1.21rc1","sha256":"ccc","size":26000000,"kind":"source"}
+  ]}
+]

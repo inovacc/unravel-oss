@@ -1,0 +1,19 @@
+{
+  "_comment": "Synthetic-fs hint for UWP UDF resolver tests (BUG-01). Not loaded by tests; tests build the layout via t.TempDir + os.MkdirAll. This file documents the two layouts we exercise.",
+  "layouts": [
+    {
+      "name": "whatsapp_flat",
+      "pfn": "5319275A.WhatsAppDesktop_cv1g1gvanyjgm",
+      "install_folder": "5319275A.WhatsAppDesktop_2.2615.101.0_x64__cv1g1gvanyjgm",
+      "ebwebview_relative": "LocalCache/EBWebView"
+    },
+    {
+      "name": "teams_vendor_nested",
+      "pfn": "MSTeams_8wekyb3d8bbwe",
+      "install_folder": "MSTeams_26072.521.4595.7966_x64__8wekyb3d8bbwe",
+      "ebwebview_relative": "LocalCache/Microsoft/MSTeams/EBWebView"
+    }
+  ],
+  "expected_source": "uwp-localcache",
+  "expected_exists": true
+}

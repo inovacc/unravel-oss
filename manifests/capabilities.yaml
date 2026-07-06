@@ -1,0 +1,106 @@
+# Phase 4 — UWP/WinUI capability scoring rubric (D-11). Auditable; security
+# reviewers may hand-edit. Loaded by pkg/uwp/risk.LoadRubric. If absent or
+# malformed, pkg/uwp/risk.DefaultWeights() / DefaultRubric() are used.
+#
+# Capability reference:
+#   https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations
+#
+# Weights are 0..100. Anchors derived from the canonical Microsoft capability
+# list and the Phase 4 RESEARCH.md scoring table; security reviewers should
+# refresh this table whenever Microsoft adds new capabilities.
+
+version: 1
+
+weights:
+  # ── Foundation (general-use) ───────────────────────────────────────────
+  internetClient:                40
+  internetClientServer:          60
+  privateNetworkClientServer:    60
+  documentsLibrary:              100   # broad FS access — auto-critical-equivalent
+  picturesLibrary:               100
+  videosLibrary:                 15
+  musicLibrary:                  15
+  removableStorage:              40
+  enterpriseAuthentication:      100
+  sharedUserCertificates:        50
+  appointments:                  20
+  contacts:                      20
+  phoneCall:                     45
+  voipCall:                      45
+  objects3D:                     10
+  recordedCallsFolder:           15
+  chat:                          15
+
+  # ── uap namespace ──────────────────────────────────────────────────────
+  userDataSystem:                75
+  userAccountInformation:        20
+
+  # ── uap2 namespace ─────────────────────────────────────────────────────
+  phoneCallHistorySystem:        45
+  spatialPerception:             50
+
+  # ── uap3 namespace ─────────────────────────────────────────────────────
+  userDataAccountsProvider:      50
+  backgroundMediaPlayback:       25
+
+  # ── uap6 namespace ─────────────────────────────────────────────────────
+  walletSystem:                  60
+  cellularDeviceIdentity:        50
+
+  # ── uap8 namespace ─────────────────────────────────────────────────────
+  screenCapture:                 75
+  cellularData:                  40
+
+  # ── uap10 namespace ────────────────────────────────────────────────────
+  globalMediaControl:            50
+  storeLicenseManagement:        50
+
+  # ── uap13 / uap15 ──────────────────────────────────────────────────────
+  oneProcessVoIP:                40
+  packagedServices:              50
+
+  # ── Hardware / IO ──────────────────────────────────────────────────────
+  webcam:                        70
+  microphone:                    70
+  location:                      70
+  bluetooth:                     40
+  wifiControl:                   50
+  radios:                        40
+  proximity:                     40
+  lowLevelDevices:               50
+
+  # ── rescap (auto-critical regardless of weight) ────────────────────────
+  runFullTrust:                  100
+  allowElevation:                100
+  broadFileSystemAccess:         100
+  confirmAppClose:               100
+  inputObservation:              100
+  inputInjectionBrokered:        100
+  packageManagement:             100
+  packagePolicySystem:           100
+  unvirtualizedResources:        100
+
+auto_critical_namespaces: [rescap]
+auto_critical_names: []   # extra one-offs in addition to namespace rule
+
+unknown_capability:
+  bucket: high
+  weight: 50
+
+signature_multipliers:
+  unsigned:           2.0
+  invalid:            2.0
+  self-signed:        1.5
+  trusted-other:      1.0
+  trusted-microsoft:  0.8
+
+# D-13: trusted Microsoft Authenticode caps the resulting bucket at one tier
+# below the computed value (e.g., a "critical" weighted score signed by
+# Microsoft is reported as "high" instead).
+trusted_microsoft_max_bucket: high
+
+buckets:
+  - { name: low,      max: 25 }
+  - { name: medium,   max: 50 }
+  - { name: high,     max: 75 }
+  - { name: critical, max: 100 }

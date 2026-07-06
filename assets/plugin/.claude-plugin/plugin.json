@@ -1,0 +1,27 @@
+{
+  "name": "unravel",
+  "version": "0.7.0",
+  "description": "Universal forensic teardown engine — dissect any application, package, or binary for security analysis",
+  "author": "inovacc",
+  "repository": "https://github.com/inovacc/unravel",
+  "license": "BSD-3-Clause",
+  "skills": [
+    "skills/detect",
+    "skills/teardown",
+    "skills/android",
+    "skills/ios",
+    "skills/electron",
+    "skills/npm",
+    "skills/java",
+    "skills/knowledge"
+  ],
+  "hooks": "hooks/hooks.json",
+  "mcp": {
+    "command": "unravel",
+    "args": ["mcp", "serve"],
+    "transport": "stdio"
+  },
+  "requirements": {
+    "min_claude_code_version": "1.0.0"
+  }
+}

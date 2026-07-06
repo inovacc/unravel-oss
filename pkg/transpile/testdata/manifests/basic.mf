@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Main-Class: com.example.Main
+Class-Path: lib/commons-io.jar lib/guava.jar
+Implementation-Title: Example App
+Implementation-Version: 1.2.3
+Created-By: Apache Maven
+Built-By: developer

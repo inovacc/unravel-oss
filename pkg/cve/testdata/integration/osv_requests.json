@@ -1,0 +1,30 @@
+{
+  "_capture_note": "Hand-crafted OSV /v1/querybatch response for PyPI/requests@2.27.0 → CVE-2023-32681. Refresh: curl -sS -X POST -H 'Content-Type: application/json' --data '{\"queries\":[{\"package\":{\"ecosystem\":\"PyPI\",\"name\":\"requests\"},\"version\":\"2.27.0\"}]}' https://api.osv.dev/v1/querybatch",
+  "results": [
+    {
+      "vulns": [
+        {
+          "id": "GHSA-j8r2-6x86-q33q",
+          "aliases": ["CVE-2023-32681"],
+          "summary": "Unintended leak of Proxy-Authorization header in requests",
+          "references": [
+            {"type": "ADVISORY", "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-32681"}
+          ],
+          "severity": [
+            {"type": "CVSS_V3", "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"}
+          ],
+          "affected": [
+            {
+              "ranges": [
+                {"type": "ECOSYSTEM", "events": [{"introduced": "0"}, {"fixed": "2.31.0"}]}
+              ]
+            }
+          ],
+          "database_specific": {
+            "cwe_ids": ["CWE-200"]
+          }
+        }
+      ]
+    }
+  ]
+}

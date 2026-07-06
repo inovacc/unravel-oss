@@ -1,0 +1,30 @@
+Operate on the unravel knowledge base.
+
+Phase 29 ships `merge` only — analysts use it to collapse identity
+forks (cert rotation, display-name churn) the moment they appear. Phase 32
+will land `show`, `list`, `diff` and other read-side subcommands.
+
+Usage:
+  unravel kb [command]
+
+Available Commands:
+  build       Headless: dissect ANY artifact and build/update its KB entry (capture + classify + static backfill)
+  catalog     Browse and read the knowledge base
+  curated     Read-only retrieval of curated kb-store artifacts for a kb_id
+  drift       Knowledge-base drift tracking
+  enrich      Populate and enrich knowledge-base rows
+  findings    Adjudication findings
+  gaps        Knowledge gap workflow
+  ops         Knowledge-base maintenance
+  transfer    Move knowledge-base data (export/import/diff)
+
+Flags:
+  -h, --help   help for kb
+
+Global Flags:
+      --debug              dump all intermediate artifacts to a timestamped debug/ directory
+  -o, --output string      output directory
+      --tools-dir string   directory with RE tools to prepend to PATH
+  -v, --verbose            verbose output
+
+Use "unravel kb [command] --help" for more information about a command.

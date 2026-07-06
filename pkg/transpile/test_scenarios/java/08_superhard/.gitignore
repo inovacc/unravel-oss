@@ -1,0 +1,12 @@
+.idea
+.vscode
+target/
+shopping/src/main/ui/node_modules/
+shopping/src/main/ui/build/
+shopping/src/main/ui/node
+shopping/src/main/resources
+*.iml
+*~
+
+.DS_Store
+*dependency-reduced-pom.xml

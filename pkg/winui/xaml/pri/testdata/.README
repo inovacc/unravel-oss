@@ -1,0 +1,38 @@
+PRI synthetic fixture
+=====================
+
+`synthetic.pri` is a minimal hand-built fixture consumed by parser_test.go.
+It is regenerated on demand by `TestRegenerateSyntheticPRI` (skipped by default;
+run with `-pri.regen` flag).
+
+Layout (little-endian throughout):
+
+  Offset  Size  Field
+  ------  ----  -----
+  0       8     Magic = "mrm_pri2"
+  8       4     Version = 1
+  12      8     TotalSize (full file size)
+  20      4     TocOffset = 32
+  24      4     TocCount = 2
+  28      4     SectionStart = 32 + 2*24 = 80
+  32      24    TOC entry 0: name="[mrm_hsch]" + offset + size  (HSCH = names)
+  56      24    TOC entry 1: name="[mrm_hsdt]" + offset + size  (HSDT = values)
+  80      ...   HSCH section payload (3-string pool)
+  ...     ...   HSDT section payload (3-string pool)
+
+Each string-pool payload is:
+
+  Offset  Size  Field
+  ------  ----  -----
+  0       4     Count = 3
+  4       4     Entry 0 length in UTF-16 code units
+  8       2*L   Entry 0 UTF-16LE payload
+  ...     2     NUL terminator (0x00 0x00)
+  ...     ...   Entry 1, 2 — same shape
+
+Three string pairs are emitted:
+
+  HSCH (names):  ["AppName", "AppDescription", "AppPublisher"]
+  HSDT (values): ["Hello",   "World",          "Pri"]
+
+Total file size is well under 4 KiB.

@@ -1,0 +1,4 @@
+[
+  {"path": "stdlib", "vulns": [{"id": "GO-2023-1878"}]},
+  {"path": "toolchain", "vulns": []}
+]

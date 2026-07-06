@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "script": "ssl_pinning_bypass",
+  "hooks": {
+    "ssl_pinning_bypass.okhttp.check": {
+      "summary": "Hook OkHttp CertificatePinner.check to bypass cert pinning.",
+      "criteria": [
+        {"op": "present", "target": "args[0]"},
+        {"op": "equals", "target": "args[0]", "value": "api.example.com"},
+        {"op": "regex", "target": "args[0]", "pattern": "^[a-z0-9.-]+$"},
+        {"op": "frequency-count", "hook_id": "ssl_pinning_bypass.okhttp.check", "min": 1, "max": 10}
+      ]
+    },
+    "crypto.cipher.getInstance": {
+      "criteria": [
+        {"op": "regex", "target": "args[0]", "pattern": "AES/(CBC|GCM)/.*"}
+      ]
+    },
+    "http.request.send": {
+      "criteria": [
+        {"op": "in-range", "target": "ret", "min": 200, "max": 299}
+      ]
+    },
+    "absent.hook.never_fires": {
+      "criteria": [
+        {"op": "frequency-count", "hook_id": "absent.hook.never_fires", "min": 1, "max": 5}
+      ]
+    }
+  }
+}

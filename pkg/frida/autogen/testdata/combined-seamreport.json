@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-05-02T00:00:00Z",
+  "framework": "hybrid",
+  "seams": [
+    {
+      "kind": "IAT",
+      "confidence": "high",
+      "framework": "electron",
+      "evidence": [{"type": "pe-import", "path": "app.exe"}],
+      "reachable_runtime": true
+    },
+    {
+      "kind": "DT_NEEDED",
+      "confidence": "medium",
+      "framework": "electron",
+      "evidence": [{"type": "file-content", "path": "libdl.so.2"}],
+      "reachable_runtime": true,
+      "ptrace_eligible_binary": true,
+      "ptrace_flags": ["non_pie"],
+      "ptrace_eligible_binary_note": "host ptrace_scope policy (kernel.yama.ptrace_scope) applies at runtime; check via /proc/sys/kernel/yama/ptrace_scope before attempting attach"
+    }
+  ],
+  "summary": {"total_seams": 3, "by_kind": {"IAT": 1, "DT_NEEDED": 1, "LC_LOAD_DYLIB": 1}, "by_confidence": {"high": 2, "medium": 1}},
+  "arches": [
+    {
+      "arch": "arm64",
+      "seams": [
+        {
+          "kind": "LC_LOAD_DYLIB",
+          "confidence": "high",
+          "framework": "macos",
+          "evidence": [{"type": "file-content", "path": "/usr/lib/libSystem.B.dylib"}],
+          "reachable_runtime": true,
+          "signing_blocks": ["LC_CODE_SIGNATURE"]
+        }
+      ]
+    }
+  ]
+}

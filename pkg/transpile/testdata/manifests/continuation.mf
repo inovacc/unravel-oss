@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Class-Path: lib/a.jar lib/b.jar lib/c.jar lib/d.jar lib/e.jar
+ lib/f.jar lib/g.jar lib/h.jar
+Main-Class: com.example.LongClassNameThatNeedsCon
+ tinuation

@@ -1,0 +1,8 @@
+{
+  "name": "fixture-hybrid-app",
+  "version": "0.0.1",
+  "main": "main.js",
+  "devDependencies": {
+    "electron": "^29.1.0"
+  }
+}

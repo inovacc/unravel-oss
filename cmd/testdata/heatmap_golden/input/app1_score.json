@@ -1,0 +1,12 @@
+{
+  "kb_id": "kb_app1",
+  "package": "app1",
+  "coverage": {
+    "dimensions_at_80": 11,
+    "mean_score": 85.8
+  },
+  "iterations": [
+    { "id": "W-11", "framework": "webview2-uwp", "loop_exit": true },
+    { "id": "W-13" }
+  ]
+}

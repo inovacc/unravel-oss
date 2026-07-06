@@ -1,0 +1,21 @@
+{
+  "apps": [
+    {
+      "package": "BoundaryApp",
+      "dimensions": [
+        { "id": "identity", "name": "identity", "score": 80 },
+        { "id": "filesystem", "name": "filesystem", "score": 80 },
+        { "id": "binary_surface", "name": "binary_surface", "score": 80 },
+        { "id": "source_layer", "name": "source_layer", "score": 80 },
+        { "id": "ipc", "name": "ipc", "score": 80 },
+        { "id": "api", "name": "api", "score": 80 },
+        { "id": "wire", "name": "wire", "score": 80 },
+        { "id": "storage", "name": "storage", "score": 80 },
+        { "id": "auth", "name": "auth", "score": 80 },
+        { "id": "crypto", "name": "crypto", "score": 80 },
+        { "id": "state_machines", "name": "state_machines", "score": 80 },
+        { "id": "behavior", "name": "behavior", "score": 80 }
+      ]
+    }
+  ]
+}

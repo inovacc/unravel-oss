@@ -1,0 +1,9 @@
+[
+  {
+    "name": "App",
+    "children": [
+      { "name": "Header", "children": [{ "name": "Logo", "children": [] }] },
+      { "name": "Main", "children": [] }
+    ]
+  }
+]

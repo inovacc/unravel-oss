@@ -1,0 +1,20 @@
+{
+  "_comment": "F-69-07 floor-reproduction fixture for Microsoft Teams. Minimal hand-authored *dissect.DissectResult modeling ONLY scorer-read fields. NOT a full DissectResult mirror. Authored so storage=0 and behavior=10 reproduce the F-69-07 floor through the live scorer Score() path. webview2_info is present (so behavior legacy scenarios==1 -> 10*1=10) but its profiles list is intentionally EMPTY so the storage scorer stays at 0 (len(profiles)>0 is false). cert_info absent so the 85 spec-refresh floor never engages. msix_info carries no capabilities/urls/ui-hint files so scoreBehaviorUWP stays <=10. package_name differs from rescan pkgId 'MSTeams_8wekyb3d8bbwe' (H4/A2 substrate).",
+  "_grounded_in": "72-RESEARCH.md Fixture Repro Design",
+  "_phase": "72",
+  "_task": "72-01-01",
+  "source_path": "C:\\Program Files\\WindowsApps\\MSTeams_24295.605.3225.8804_x64__8wekyb3d8bbwe",
+  "msix_info": {
+    "package_name": "MSTeams_24295.605.3225.8804_x64__8wekyb3d8bbwe",
+    "package_version": "24295.605.3225.8804",
+    "manifest_path": "C:\\Program Files\\WindowsApps\\MSTeams_24295.605.3225.8804_x64__8wekyb3d8bbwe\\AppxManifest.xml",
+    "files": [
+      {"name": "ms-teams.exe", "size": 20971520},
+      {"name": "resources/index.html", "size": 8192}
+    ]
+  },
+  "webview2_info": {
+    "is_webview2": true,
+    "profiles": []
+  }
+}

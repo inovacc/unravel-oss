@@ -1,0 +1,32 @@
+{
+  "records": [
+    {
+      "id": "iter-1",
+      "iter": 1,
+      "ts": "2026-05-06T18:56:51Z",
+      "weak_dims": ["auth", "state_machines"],
+      "dispatched": [],
+      "bumps": {},
+      "mean": 78,
+      "coverage": 7,
+      "post_mean": 80,
+      "post_coverage": 9,
+      "runtime_capture_unavailable": false,
+      "citations_ok": false
+    },
+    {
+      "id": "iter-2",
+      "iter": 2,
+      "ts": "2026-05-06T19:00:13Z",
+      "weak_dims": ["wire", "auth"],
+      "dispatched": [],
+      "bumps": {"wire": 85, "auth": 80},
+      "mean": 80,
+      "coverage": 9,
+      "post_mean": 85,
+      "post_coverage": 11,
+      "runtime_capture_unavailable": false,
+      "citations_ok": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "_comment": "F-69-07 floor-reproduction fixture for WhatsApp. Minimal hand-authored *dissect.DissectResult modeling ONLY the fields the storage/crypto/behavior scorers read. NOT a full DissectResult mirror. Authored so storage=0 and crypto=0 reproduce the F-69-07 floor through the live scorer Score() path. msix_info.package_name is intentionally DIFFERENT from the rescan pkgId '5319275A.WhatsAppDesktop' (H4/A2 path-contract probe substrate).",
+  "_grounded_in": "72-RESEARCH.md Fixture Repro Design",
+  "_phase": "72",
+  "_task": "72-01-01",
+  "source_path": "C:\\Program Files\\WindowsApps\\5319275A.WhatsAppDesktop_2.2616.100.0_x64__cv1g1gvanyjgm",
+  "msix_info": {
+    "package_name": "5319275A.WhatsAppDesktop_2.2616.100.0_x64__cv1g1gvanyjgm",
+    "package_version": "2.2616.100.0",
+    "manifest_path": "C:\\Program Files\\WindowsApps\\5319275A.WhatsAppDesktop_2.2616.100.0_x64__cv1g1gvanyjgm\\AppxManifest.xml",
+    "files": [
+      {"name": "WhatsApp.exe", "size": 12582912},
+      {"name": "wwwroot/index.html", "size": 4096},
+      {"name": "wwwroot/main.css", "size": 65536},
+      {"name": "wwwroot/manifest.json", "size": 1024}
+    ]
+  },
+  "js_analysis": {
+    "file": "wwwroot/app.js",
+    "indicators": [],
+    "dangerous_calls": [],
+    "network_calls": [],
+    "urls": []
+  }
+}

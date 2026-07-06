@@ -1,0 +1,11 @@
+.btn {
+  background-color: blue;
+  color: red;
+  padding: 8px;
+}
+
+.card {
+  color: green;
+  margin: 10px;
+  z-index: 1;
+}

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "rationale_doc": "Phase-84 KB-maturity gate (D-01/D-02/D-08). This is a NEW, separate artifact from the byte-sacred VALD-02 fixture expected_score_w13_final.json (kb_id 270943e5..., which MUST stay byte-untouched). Per-dim floors are derived from 84-RESEARCH.md §C demonstrated-extraction-capability methodology: each floor = what a correct deep extractor can verifiably recover from the ALREADY-CAPTURED real WebView2/UWP surface (EBWebView Code Cache / Service Worker / LevelDB / IndexedDB), NOT 'whatever the current code emits' (fabrication-by-baseline, prohibited by D-02) and NOT blindly the historical ~90s. Anti-fabrication check: every floor here is strictly above the current shallow WhatsApp sidecar score for that dim (crypto 0, source_layer 30, storage 25, binary_surface 73, api 75 per 84-CONTEXT evidence baseline) and below a fabricated 90 where the packaging genuinely lacks the surface (no PE crypto imports / no .NET decompile surface for the WhatsApp UWP install). Floors are locked here before any extractor plan (D-08 bar-first); 84-02..84-04 depend_on 84-01. See 84-RESEARCH.md §C threshold methodology, §Per-Dim Classification Table, and assumption A3 (Phase-1 spike confirms-or-lowers each from real extracted evidence).",
+  "per_dim": [
+    {
+      "id": "crypto",
+      "floor": 70,
+      "justification": "A correct deep extractor wires the captured EBWebView Code Cache / Service Worker JS source into r.JSAnalysis so scanJSCryptoRefs fires on the real WhatsApp web crypto stack (WebCrypto SubtleCrypto + libsignal protocol references are confirmed present in the WhatsApp web bundle) plus the pure-Go secrets scan over the resolved profile path. Floor is 70, NOT 90: this MSIX packaging genuinely has no PE crypto-DLL imports (bcrypt/crypt32 absent from the 192 managed/native DLLs) and no .NET decompile crypto surface, so the 90 Teams achieves via PE+.NET is unreachable for this app-class by honest extraction. 70 reflects JS-recoverable crypto evidence only. Floor (70) is strictly above the current shallow score (0) — not fabrication-by-baseline.",
+      "evidence_ref": "84-RESEARCH.md §C + §Per-Dim Classification Table row crypto; real KB out/5319275A.WhatsAppDesktop-kb/knowledge.json (js_analysis ABSENT); on-disk %LOCALAPPDATA%/Packages/5319275A.WhatsAppDesktop_cv1g1gvanyjgm/LocalCache/EBWebView/Default/Code Cache/ + Service Worker/ScriptCache/"
+    },
+    {
+      "id": "source_layer",
+      "floor": 70,
+      "justification": "A correct deep extractor reconstructs JS from the captured EBWebView Code Cache + Service Worker ScriptCache (Chromium retains cached SOURCE alongside V8 bytecode — 84-RESEARCH A1) and feeds r.JSAnalysis (+20) plus counts the reconstructed JS files against the package manifest. Floor is 70, NOT 90: there is no .NET decompile surface (r.DotNetDecompile genuinely nil for this packaging), so the +20 .NET reconstruction tier Teams reaches is honestly unreachable here. 70 reflects reconstructed-JS + manifest evidence only. Floor (70) is strictly above the current shallow score (30) — not fabrication-by-baseline.",
+      "evidence_ref": "84-RESEARCH.md §C + §Per-Dim Classification Table row source_layer; KB source_files ext histogram 192 dll / 3 js / 2 xml (3 js are extension stubs only); EBWebView Code Cache/ source recoverable per A1"
+    },
+    {
+      "id": "storage",
+      "floor": 75,
+      "justification": "A correct deep extractor parses the captured EBWebView LevelDB (Local Storage / Session Storage) and IndexedDB (.leveldb origin folders) with the existing pure-Go pkg/leveldb reader, populating r.LevelDB with parsed schema + key/DB-name enumeration, and credits the profile-resolved storage subtree (WebView2Info.Profiles[].Path) rather than only a single MSIXInfo.Files substring presence. Floor is 75: it requires PARSED schema/keys (depth), deliberately killing the current +25 shallow-presence credit; not higher than 75 because some IndexedDB blobs are opaque-encrypted and not all key semantics are recoverable without the running app. Floor (75) is strictly above the current shallow score (25) — not fabrication-by-baseline.",
+      "evidence_ref": "84-RESEARCH.md §C + §Per-Dim Classification Table row storage; on-disk EBWebView/Default/ has IndexedDB/, Local Storage/, Service Worker/ (real LevelDB); pkg/webview2/analyze leveldb.ParseDirectory path"
+    },
+    {
+      "id": "binary_surface",
+      "floor": 85,
+      "justification": "The explicitly-deferred 'W-12 deepening adders deferred to P57' (Phase 84 = P57) scorer-curve work: a deep extractor credits per-PE inspection depth (import-table counts, section entropy, version-info) as evidence-gated additive adders over the current cap-70 UWP base, lifting toward 85. Floor is 85, NOT 90: the additive adders are evidence-gated on what 192 real PEs genuinely expose; 90 (Teams) requires a higher signed ratio this packaging does not reach. Floor (85) is strictly above the current shallow score (73) — not fabrication-by-baseline.",
+      "evidence_ref": "84-RESEARCH.md §Per-Dim Classification Table row binary_surface; scorer_binary_surface.go:105-132 curve comment 'cap 70 (W-12 deepening to 90 deferred to P57)'; real sidecar out/reports/scorecards/5319275A.WhatsAppDesktop_score.json"
+    },
+    {
+      "id": "api",
+      "floor": 80,
+      "justification": "The explicitly-deferred 'W-12 +15 / W-14 +10 deepening deferred to P57' scorer-curve work, with the precision fix: replace the raw count>50 hard step (200 'endpoints' are mostly microsoft.com/pkiops/crl PKI/CRL noise) with a quality-weighted curve that dedupes, classifies endpoint kind, and drops PKI/CRL noise, then applies evidence-gated additive adders past the current 75 step. Floor is 80, NOT 90: it credits only quality-filtered real API endpoints, so the number is deliberately conservative against noise inflation. Floor (80) is strictly above the current shallow score (75) — not fabrication-by-baseline.",
+      "evidence_ref": "84-RESEARCH.md §Per-Dim Classification Table row api + §Common Pitfalls 'count-as-quality'; scorer_api.go:51-58 hard count step; KB communication.endpoints=200 (cert-CRL noise dominated)"
+    }
+  ],
+  "corpus_gate": {
+    "min_pass_apps": 7,
+    "of": 10,
+    "metric": "per-dim floor met"
+  }
+}

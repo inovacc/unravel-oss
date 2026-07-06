@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10">
+  <Identity Name="Test.UWPInstalledDir.WebView2" Publisher="CN=Test" Version="1.0.0.0"/>
+  <Properties>
+    <DisplayName>Test UWP Installed Dir Fixture</DisplayName>
+    <PublisherDisplayName>Test</PublisherDisplayName>
+  </Properties>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/>
+    <PackageDependency Name="Microsoft.Web.WebView2.Runtime" MinVersion="1.0.0.0"/>
+  </Dependencies>
+</Package>

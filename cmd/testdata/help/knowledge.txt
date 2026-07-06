@@ -1,0 +1,63 @@
+Generate a structured knowledge source describing an application's communication
+patterns, authentication, IPC channels, stealth features, telemetry, and security
+posture from any supported file type (APK, ASAR, PE, ELF, etc.).
+
+Examples:
+  unravel knowledge ./app.apk
+  unravel knowledge ./app.asar --json
+  unravel knowledge ./binary.exe -o ./report -v
+
+Usage:
+  unravel knowledge <path> [flags]
+  unravel knowledge [command]
+
+Available Commands:
+  ask             Free-form Q&A over the knowledge base — expansion + multi-search + synthesis
+  backfill-static Populate module_deps and clean noisy symbols_json from stored bodies (pure-Go, no AI)
+  diff            Compare two knowledge directories
+  dissect-app     Seed app_facts from the YAML registry (and run mechanical dissect steps)
+  doctor          Audit knowledge.db integrity — orphans, embedding dims, fact_history precision
+  dump            Print one module row (full body excerpt, summary, tags)
+  enrich          Run claude as a pipeline to translate modules into structured natural-language analysis
+  extract         Extract JS bundles from a Chromium Block File Cache directory
+  facts           Show answered facts in a readable layout
+  fill            Loop until no gaps remain — claude answers each open fact
+  gaps            List app_facts rows whose value is NULL (open questions)
+  index           Index extracted JS bundles into a Postgres + pg_trgm knowledge base
+  ingest          Walk a source-code repo and persist modules into the knowledge DB
+  list-apps       Print the built-in app cache registry used by 'sweep'
+  mcp-loop        Drive the gap-resolution loop without an MCP client (debug)
+  migrate         Generate cross-framework migration hints. Token cost applies.
+  pending         List modules whose summary is empty (id<TAB>app<TAB>name)
+  prompts         Inspect the embedded LLM prompt registry
+  repos           List repos indexed by 'knowledge ingest'
+  search          Search knowledge base modules using trigram fuzzy match
+  sources         Print the knowledge_sources evolution timeline
+  stats           Per-app row counts, summarized counts, average body size
+  summarize       Persist a natural-language summary against a module id
+  sweep           Auto-extract + auto-index every supported app's cache into one knowledge DB
+  synth-names     Derive deterministic synthetic_name for teams_module_<N> placeholder modules (pure-Go, no AI)
+  topics          Derive deterministic modules.topic over the enriched subset (pure-Go, no AI)
+
+Flags:
+      --cdp-port int             CDP port for runtime probe (0 = no probe)
+      --enrich                   enrich dependency list with CVE/CWE/version-freshness data (sends dep names to OSV/NVD/GHSA — opt-in per D-08)
+      --enrich-include-private   do NOT skip scoped/private packages during enrichment (overrides D-08 default)
+  -h, --help                     help for knowledge
+      --iterate                  Run iterative-deepening rubric loop (P57)
+      --json                     Output as JSON to stdout
+      --live                     Enable optional live-overlay capture pass (CDP). Adds provenance metadata; static output unchanged when absent.
+      --live-timeout duration    Maximum live-pass duration. Default 30s. (default 30s)
+      --max-iter int             Maximum iterations for --iterate (default 5)
+      --scorecard-md             Emit SCORECARD.md next to knowledge.json (default true)
+      --strict-citations         Require every spec line to cite evidence (P58) (default true)
+      --threshold int            Score threshold (percent) for convergence (default 80)
+      --with-ai                  Enable MCP-backed beautification across Java/JS/Bundle/C# tracks. Token cost applies.
+
+Global Flags:
+      --debug              dump all intermediate artifacts to a timestamped debug/ directory
+  -o, --output string      output directory
+      --tools-dir string   directory with RE tools to prepend to PATH
+  -v, --verbose            verbose output
+
+Use "unravel knowledge [command] --help" for more information about a command.

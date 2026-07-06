@@ -1,0 +1,17 @@
+{
+  "_schema_doc": "P63 D-10 byte-shape sentinel for iterations.jsonl. TestIterationsJsonl_SchemaParity_AgainstGolden asserts generated record top-level keys are an EXACT SUBSET of the keys present in this object. Any new top-level field added to IterationRecord MUST update this golden in the same commit, otherwise the test fails. Captured from out/whatsapp-kb/iterations.jsonl line 1 (pre-P63-fix iter-1 record).",
+  "id": "iter-1",
+  "iter": 1,
+  "ts": "2026-05-09T12:34:40Z",
+  "weak_dims": ["binary_surface", "source_layer", "ipc", "api", "wire", "storage", "auth", "crypto", "state_machines", "behavior"],
+  "dispatched": [
+    {"pass": "ipc", "target_dims": ["ipc"], "duration_ms": 0, "frames_captured": 0, "ok": false, "note": "no frames"}
+  ],
+  "bumps": {},
+  "mean": 25,
+  "coverage": 2,
+  "post_mean": 25,
+  "post_coverage": 2,
+  "runtime_capture_unavailable": false,
+  "citations_ok": true
+}

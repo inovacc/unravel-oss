@@ -1,0 +1,22 @@
+{
+  "package_name": "com.example.app",
+  "scripts": [
+    {
+      "script_name": "ssl_pinning_bypass",
+      "output": [
+        "[SSL] OkHttp pinning bypass attached for: api.example.com",
+        "[FRIDA-EVENT] {\"v\":1,\"ts\":\"2026-04-26T14:30:00.000Z\",\"hook_id\":\"ssl_pinning_bypass.okhttp.check\",\"phase\":\"enter\",\"args\":[\"api.example.com\",\"[List<Certificate>]\"],\"frame\":\"okhttp3.CertificatePinner.check\"}",
+        "[FRIDA-EVENT] {\"v\":1,\"ts\":\"2026-04-26T14:30:01.000Z\",\"hook_id\":\"ssl_pinning_bypass.okhttp.check\",\"phase\":\"leave\",\"ret\":0,\"frame\":\"okhttp3.CertificatePinner.check\"}",
+        "[FRIDA-EVENT] {\"v\":1,\"ts\":\"2026-04-26T14:30:02.000Z\",\"hook_id\":\"ssl_pinning_bypass.okhttp.check\",\"phase\":\"enter\",\"args\":[\"cdn.example.com\",\"[List<Certificate>]\"],\"frame\":\"okhttp3.CertificatePinner.check\"}",
+        "[SSL] regular log line that is not an event",
+        "[FRIDA-EVENT] {\"v\":1,\"ts\":\"2026-04-26T14:30:03.000Z\",\"hook_id\":\"crypto.cipher.getInstance\",\"phase\":\"enter\",\"args\":[\"AES/CBC/PKCS5Padding\"]}",
+        "[FRIDA-EVENT] {\"v\":1,\"ts\":\"2026-04-26T14:30:04.000Z\",\"hook_id\":\"http.request.send\",\"phase\":\"enter\",\"args\":[42],\"ret\":200}",
+        "[FRIDA-EVENT] this-is-malformed-json-that-should-be-skipped"
+      ],
+      "errors": [],
+      "duration": 1000000000,
+      "started": "2026-04-26T14:30:00Z"
+    }
+  ],
+  "duration": 1000000000
+}

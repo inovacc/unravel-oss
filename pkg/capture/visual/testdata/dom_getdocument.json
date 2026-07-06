@@ -1,0 +1,53 @@
+{
+  "nodeId": 1,
+  "nodeType": 9,
+  "nodeName": "#document",
+  "localName": "",
+  "nodeValue": "",
+  "children": [
+    {
+      "nodeId": 2,
+      "nodeType": 1,
+      "nodeName": "HTML",
+      "localName": "html",
+      "nodeValue": "",
+      "attributes": ["lang", "en"],
+      "children": [
+        {
+          "nodeId": 3,
+          "nodeType": 1,
+          "nodeName": "BODY",
+          "localName": "body",
+          "nodeValue": "",
+          "children": [
+            {
+              "nodeId": 4,
+              "nodeType": 1,
+              "nodeName": "DIV",
+              "localName": "div",
+              "nodeValue": "",
+              "attributes": ["id", "app", "role", "main"],
+              "children": [
+                {
+                  "nodeId": 5,
+                  "nodeType": 1,
+                  "nodeName": "HEADER",
+                  "localName": "header",
+                  "nodeValue": "",
+                  "children": []
+                },
+                {
+                  "nodeId": 6,
+                  "nodeType": 3,
+                  "nodeName": "#text",
+                  "localName": "",
+                  "nodeValue": "ignored"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

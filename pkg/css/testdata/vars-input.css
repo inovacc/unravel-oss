@@ -1,0 +1,13 @@
+:root {
+  --primary: #007bff;
+  --bg: white;
+}
+
+.btn {
+  color: var(--primary);
+  background: var(--bg);
+}
+
+.link {
+  color: var(--undefined, blue);
+}

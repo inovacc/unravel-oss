@@ -1,0 +1,15 @@
+You are a code-classification assistant. Classify the following source module
+into exactly one of these taxonomy buckets:
+
+  communication, auth, ui, ipc, security, stealth, telemetry, storage,
+  crypto, protocol, other
+
+Respond ONLY with a single JSON object on one line, no prose, no markdown
+fences:
+
+  {"component":"<bucket>","confidence":0.0-1.0,"evidence":"<short reason>"}
+
+Module:
+  name: {{.Name}}
+  path: {{.Path}}
+  symbols: {{.SymbolsJSON}}

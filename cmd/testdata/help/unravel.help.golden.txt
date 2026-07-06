@@ -1,0 +1,109 @@
+
+██╗   ██╗███╗   ██╗██████╗  █████╗ ██╗   ██╗███████╗██╗
+██║   ██║████╗  ██║██╔══██╗██╔══██╗██║   ██║██╔════╝██║
+██║   ██║██╔██╗ ██║██████╔╝███████║██║   ██║█████╗  ██║
+██║   ██║██║╚██╗██║██╔══██╗██╔══██║╚██╗ ██╔╝██╔══╝  ██║
+╚██████╔╝██║ ╚████║██║  ██║██║  ██║ ╚████╔╝ ███████╗███████╗
+ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚══════╝
+
+Unravel is a unified security analysis toolkit for desktop applications
+built on Electron and Tauri frameworks.
+
+Commands:
+  analyze   - Full security analysis with manifest-based detection
+  asar      - Extract and search ASAR archives
+  chromium  - Extract Chromium profile data
+  dpapi     - Decrypt Windows DPAPI protected data
+  leveldb   - Parse LevelDB databases
+  cache     - Parse HTTP cache
+  ipc       - Fuzz IPC channels
+  license   - Test license validation
+  tpm       - Extract TPM keys
+  extension - Browser extension forensics
+  cert      - Binary certificate extraction and analysis
+  garble    - Go binary obfuscation analysis (garble detection)
+  android   - Android APK analysis, decompilation, and reverse engineering
+  deb       - Debian package analysis and extraction
+  rpm       - RPM package analysis and extraction
+  detect    - Detect file types and show applicable commands
+  transpile - Transpile source code to Go (C++, Java, Python, TypeScript)
+  dissect   - Auto-detect and run all applicable analyses
+
+Examples:
+  unravel analyze ./MyApp -o ./report
+  unravel asar extract ./app.asar -o ./extracted
+  unravel chromium extract %APPDATA%/MyApp -o ./data
+  unravel extension scan --browser chrome --json
+  unravel extension analyze <extension_id>
+  unravel garble detect ./binary.exe
+  unravel garble scan ./directory -v
+
+Usage:
+  unravel [flags]
+  unravel [command]
+
+Available Commands:
+  advinstaller Advanced Installer bootstrapper analysis and extraction
+  android      Android APK analysis, decompilation, and reverse engineering
+  app          Whole-app / cross-cutting operations
+  asar         ASAR archive operations
+  bun          Bun standalone binary analysis and decompilation
+  bundle       Bundle reconstruction operations (webpack, Vite, esbuild, Rollup)
+  cache        Parse HTTP cache
+  capture      Capture and replay live Electron/Tauri/Android app behavior
+  cert         Binary certificate extraction and analysis (PE + ELF)
+  chromium     Extract Chromium profile data
+  completion   Generate the autocompletion script for the specified shell
+  css          CSS extraction and analysis
+  daemon       Manage the unravel host-singleton supervisor daemon
+  db           Configure the Postgres knowledge catalog
+  deb          Debian package analysis and extraction
+  debug        Browse and compare debug sessions
+  dotnet       .NET application analysis and dependency inspection
+  dpapi        Windows DPAPI decryption
+  extension    Browser extension forensics
+  frida        Generate Frida instrumentation scripts for Android apps
+  garble       Go binary obfuscation analysis (garble detection)
+  goversions   Catalog of Go releases: artifacts, checksums, dates, and CVE posture
+  help         Help about any command
+  hook         Claude Code lifecycle hook handlers (invoked by the plugin's hooks.json)
+  httpshell    Secure cross-platform command execution over HTTPS
+  insights     Self-improvement insights for unravel itself (local-only)
+  ios          iOS IPA package analysis and extraction
+  ipc          IPC channel fuzzing
+  java         Java archive and class file analysis
+  jsdeob       JavaScript deobfuscator and unpacker
+  kb           Knowledge base operations (merge; Phase 32 lands more)
+  leveldb      Parse LevelDB databases
+  license      License validation testing
+  mcp          Run the MCP stdio server
+  msi          MSI package analysis and extraction
+  msix         MSIX package analysis and extraction
+  msm          Merge Module (.msm) analysis
+  nodeaddon    Node.js native addon (.node) reverse engineering
+  npm          NPM package analysis and security scanning
+  plugin       Install / uninstall / inspect the unravel AI-host plugin
+  probe        Probe an MCP server to enumerate tools, resources, and prompts
+  pyinst       Python executable analysis (PyInstaller, zipapp)
+  registry     Windows registry forensic dumps
+  rpm          RPM package analysis and extraction
+  sourcemap    JavaScript source map analysis and extraction
+  store        Manage the analysis result cache
+  tpm          TPM key extraction
+  transpile    Transpile a source file to Go (C++, Java, Python, TypeScript)
+  uwp          UWP (MSIX/AppX) application analysis
+  vcs          Source Version Control for Knowledge Sources (Git-managed)
+  wasm         WebAssembly binary analysis
+  webview2     WebView2 host application analysis
+  winsvc       Manage Windows services associated with apps
+  winui        WinUI 3 application analysis
+
+Flags:
+      --debug              dump all intermediate artifacts to a timestamped debug/ directory
+  -h, --help               help for unravel
+  -o, --output string      output directory
+      --tools-dir string   directory with RE tools to prepend to PATH
+  -v, --verbose            verbose output
+      --version            version for unravel
+
+Use "unravel [command] --help" for more information about a command.

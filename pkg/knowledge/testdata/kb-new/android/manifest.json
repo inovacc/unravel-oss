@@ -1,0 +1,6 @@
+{
+  "permissions": [
+    {"name": "INTERNET", "dangerous": false},
+    {"name": "READ_SMS", "dangerous": true}
+  ]
+}

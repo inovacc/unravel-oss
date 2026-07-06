@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: build · vet · fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Check gofmt
+        run: |
+          unformatted="$(gofmt -l .)"
+          if [ -n "$unformatted" ]; then
+            echo "Files not gofmt-clean:"; echo "$unformatted"; exit 1
+          fi
+      - name: Build
+        run: go build ./...
+      # pkg/transpile carries generated ANTLR parsers (unreachable-code by
+      # construction); excluded from vet to keep the gate meaningful.
+      - name: Vet
+        run: go vet $(go list ./... | grep -v '/pkg/transpile')
+      # NOTE: `go test ./...` is intentionally not run in CI yet — parts of the
+      # suite are not hermetic (hardcoded local paths, docs/ fixtures, and
+      # OS-specific expectations). Making the suite CI-portable is tracked as
+      # follow-up work before wiring it into this gate.

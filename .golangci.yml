@@ -1,0 +1,65 @@
+version: "2"
+
+run:
+  timeout: 10m
+  tests: false
+  skip-dirs:
+    - "^pkg[\\\\/]buf"
+  skip-dirs-use-default: false
+
+linters:
+  default: none
+  enable:
+    - govet
+    - gosec
+  settings:
+    gosec:
+      # Unravel is a binary-analysis tool: its job is to open, decompress, and
+      # shell out over UNTRUSTED inputs. The raw gosec run yields ~1081 findings
+      # dominated by rules that are INHERENT to that mission and carry no real
+      # risk here. To keep the gate ACTIONABLE (not drowned), we run gosec as an
+      # explicit allowlist of high-value rules only.
+      #
+      # Rules deliberately left out as inherent/FP for this tool, or as
+      # errcheck's domain (not enabled): G304 (file path from variable — the
+      # tool MUST open the files it analyzes), G301/G302/G306/G307 (file/dir
+      # perms on analysis artifacts), G104/G703 (unchecked errors), G115
+      # (integer-overflow casts — mostly safe timestamp/size conversions; the
+      # genuinely-dangerous ones got explicit bounds in W4). Newer experimental
+      # heuristic rules (G101/G103/G117/G201/G202/G203/G704/G705/G706) are also
+      # excluded to keep signal high.
+      #
+      # G204 (subprocess) and G305 (zip-slip) are KEPT in spirit but EXCLUDED
+      # from this BLOCKING allowlist because this gosec build's taint-analysis
+      # engine for those two rules is NON-DETERMINISTIC — it flags a different
+      # set of call sites on every run, so they cannot be cleanly annotated at
+      # stable line numbers without churn. Both classes are mitigated in source
+      # by the W3/W5 fixes (fixed argv + validated absolute paths for subprocess;
+      # Clean()+HasPrefix / filepath.Rel guards for extraction) and are tracked
+      # as a residual under docs/BACKLOG.md `SECURITY-LINT`, to be promoted to
+      # blocking once gosec's taint engine stabilises.
+      #
+      # KEPT (high-value, DETERMINISTIC) rules — these BLOCK CI. Confirmed-safe
+      # hits carry a targeted `//nolint:gosec // G<NNN> -- reason` at the exact
+      # call site (no blanket exclude):
+      #   G110  decompression bomb
+      #   G401  weak crypto primitive
+      #   G404  weak random number generator
+      #   G501  blocklisted import crypto/md5
+      #   G502  blocklisted import crypto/des
+      #   G505  blocklisted import crypto/sha1
+      #   G601  implicit memory aliasing in range loop
+      includes:
+        - G110
+        - G401
+        - G404
+        - G501
+        - G502
+        - G505
+        - G601
+
+exclusions:
+  generated: lax
+  presets:
+    - comments
+    - std-error-handling

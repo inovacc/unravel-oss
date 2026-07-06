@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "script": "win-IAT-e97e1993.js",
+  "hooks": [
+    {
+      "id": "windows-e97e1993",
+      "description": "unravel-autogen-v1: {\"seam_id\":\"e97e1993\",\"platform\":\"windows\",\"target_path\":\"app.exe\",\"tag\":\"IAT\",\"expected_events\":[\"hook_loaded\"],\"severity\":\"high\"}",
+      "criteria": [
+        {
+          "op": "present",
+          "target": "seam_id"
+        }
+      ]
+    }
+  ]
+}

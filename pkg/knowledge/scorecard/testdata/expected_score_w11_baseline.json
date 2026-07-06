@@ -1,0 +1,19 @@
+{
+  "_note": "W-11 baseline snapshot of out/whatsapp-kb/_score.json (mean ~77, third entry in W-loop iteration log: 50 -> 71.2 -> 77.5 -> 78.8 -> 83.3 -> 85.8). W-12/W-13/W-14 deepening adders are P57 scope and zeroed out here. See testdata/README.md for source-script line citations.",
+  "kb_id": "whatsapp-w11-baseline",
+  "dimensions": [
+    {"id": "identity",       "name": "Identity",        "score": 90},
+    {"id": "filesystem",     "name": "Filesystem map",  "score": 95},
+    {"id": "binary_surface", "name": "Binary surface",  "score": 70},
+    {"id": "source_layer",   "name": "Source layer",    "score": 90},
+    {"id": "ipc",            "name": "IPC",             "score": 50},
+    {"id": "api",            "name": "API surface",     "score": 75},
+    {"id": "wire",           "name": "Wire formats",    "score": 65},
+    {"id": "storage",        "name": "Storage schemas", "score": 90},
+    {"id": "auth",           "name": "Auth surface",    "score": 70},
+    {"id": "crypto",         "name": "Crypto",          "score": 85},
+    {"id": "state_machines", "name": "State machines",  "score": 80},
+    {"id": "behavior",       "name": "Behavior",        "score": 85}
+  ],
+  "coverage": 7
+}

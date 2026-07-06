@@ -1,0 +1,7 @@
+{
+  "schema_version": "v1",
+  "package_id": "p60.golden.fixture",
+  "kb_id": "p60-d10-byte-shape-fixture",
+  "captured_at": "2026-05-08T00:00:00Z",
+  "note": "Frozen fixture for D-10 byte-shape automated check (P60). Source: synthetic minimal KnowledgeResult-shaped JSON; no v2.8 corpus app produced an out/<app>-kb/knowledge.json locally at P60 capture time. The byte-shape test SHA-256s this file, runs `unravel knowledge --scorecard-md=true` against an unrelated marker target, then re-hashes and asserts unchanged."
+}

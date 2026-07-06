@@ -1,0 +1,48 @@
+{
+  "resultsPerPage": 1,
+  "startIndex": 0,
+  "totalResults": 1,
+  "format": "NVD_CVE",
+  "version": "2.0",
+  "timestamp": "2026-05-01T00:00:00.000",
+  "vulnerabilities": [
+    {
+      "cve": {
+        "id": "CVE-2021-23337",
+        "sourceIdentifier": "report@snyk.io",
+        "published": "2021-02-15T11:15:11.523",
+        "lastModified": "2024-01-01T00:00:00.000",
+        "vulnStatus": "Modified",
+        "descriptions": [
+          {"lang": "en", "value": "Lodash versions prior to 4.17.21 are vulnerable to Command Injection via template."}
+        ],
+        "metrics": {
+          "cvssMetricV31": [
+            {
+              "source": "nvd@nist.gov",
+              "type": "Primary",
+              "cvssData": {
+                "version": "3.1",
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+                "baseScore": 7.2,
+                "baseSeverity": "HIGH"
+              }
+            }
+          ]
+        },
+        "weaknesses": [
+          {
+            "source": "nvd@nist.gov",
+            "type": "Primary",
+            "description": [
+              {"lang": "en", "value": "CWE-77"}
+            ]
+          }
+        ],
+        "references": [
+          {"url": "https://github.com/lodash/lodash/commit/3469357cff396a26c363f8c1b5a91dde28ba4b1c"}
+        ]
+      }
+    }
+  ]
+}

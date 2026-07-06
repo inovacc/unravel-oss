@@ -1,0 +1,33 @@
+category: auth
+applies_to: [whatsapp, teams, slack, linkedin, discord, outlook, telegram]
+facts:
+
+  - key: pairing_method
+    value_format: enum:qr_link|phone_pair|oauth|password|sso|unknown
+    candidates_q: "QR OR PairCode OR pairing OR oauth OR sso OR login"
+    gap_prompt: |
+      How does a fresh install authenticate the device for the first time?
+      Choose one: qr_link (scan QR from phone), phone_pair (SMS code),
+      oauth, password, sso, unknown.
+
+  - key: session_token_storage
+    value_format: string
+    candidates_q: "localStorage OR IndexedDB OR cookie OR token OR Auth"
+    gap_prompt: |
+      Where is the persistent session/auth token stored client-side?
+      Format: "<storage_kind>:<location>" e.g. "IndexedDB:waSession.tokens"
+      or "localStorage:auth_token". Look at storage writes in auth modules.
+
+  - key: token_refresh_endpoint
+    value_format: string
+    candidates_q: "refresh OR refreshToken OR /oauth OR /v1/auth"
+    gap_prompt: |
+      Find the URL path of the token-refresh endpoint. Return just the
+      path (e.g. /oauth2/v2.0/token) or "unknown".
+
+  - key: identity_kdf
+    value_format: enum:Curve25519|Ed25519|RSA|other|unknown
+    candidates_q: "Curve25519 OR Ed25519 OR identity OR signature"
+    gap_prompt: |
+      Which curve / signing scheme generates the device identity key?
+      Return one of: Curve25519, Ed25519, RSA, other, unknown.

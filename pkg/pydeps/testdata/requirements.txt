@@ -1,0 +1,7 @@
+# top-level requirements
+flask==2.3.0
+django>=4.2,<5.0
+requests[security]>=2.30
+numpy~=1.24
+-r child.txt
+git-private-pkg @ git+https://internal.corp/foo

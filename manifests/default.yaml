@@ -1,0 +1,629 @@
+# Teardown Manifest - Detection and Analysis Recipes
+# This file defines how to identify and analyze different app frameworks
+
+version: "1.0"
+name: "Default AI App Analysis"
+description: "Recipes for analyzing Electron and Tauri desktop applications"
+
+# =============================================================================
+# DETECTION RULES - Rules are evaluated in order. First match wins.
+# =============================================================================
+
+detection:
+  # Electron Detection
+  - name: "electron"
+    display_name: "Electron"
+    priority: 10
+    rules:
+      files:
+        # Built app detection - standard layout
+        - pattern: "resources/app.asar"
+          weight: 100
+        - pattern: "resources/app.asar.unpacked"
+          weight: 80
+        - pattern: "resources/electron.asar"
+          weight: 90
+        # MSIX/UWP package layout (ChatGPT)
+        - pattern: "app/resources/app.asar"
+          weight: 100
+        # Squirrel installer layout (Claude) - uses glob
+        - pattern: "app-*/resources/app.asar"
+          weight: 100
+        # Source code detection
+        - pattern: "package.json"
+          weight: 60
+          content_match: '"electron":'
+        - pattern: "main.js"
+          weight: 40
+          content_match: "require('electron')"
+        - pattern: "main.js"
+          weight: 40
+          content_match: 'require("electron")'
+        - pattern: "main.js"
+          weight: 30
+          content_match: "BrowserWindow"
+        - pattern: "preload.js"
+          weight: 20
+      binary_signatures:
+        - pattern: "Electron Framework"
+          type: string
+          weight: 100
+        - pattern: "electron.exe"
+          type: string
+          weight: 90
+        - pattern: "ELECTRON_"
+          type: string
+          weight: 80
+        - pattern: "Chrome/[0-9.]+ Electron/"
+          type: regex
+          weight: 95
+      threshold: 50
+
+  # Tauri Detection
+  - name: "tauri"
+    display_name: "Tauri"
+    priority: 20
+    rules:
+      files:
+        - pattern: "tauri.conf.json"
+          weight: 100
+        - pattern: "src-tauri/tauri.conf.json"
+          weight: 100
+      binary_signatures:
+        - pattern: "tauri::"
+          type: string
+          weight: 100
+        - pattern: "__TAURI__"
+          type: string
+          weight: 95
+        - pattern: "tauri-apps"
+          type: string
+          weight: 80
+        - pattern: "wry::"
+          type: string
+          weight: 70
+      threshold: 50
+
+  # NW.js Detection
+  - name: "nwjs"
+    display_name: "NW.js"
+    priority: 30
+    rules:
+      files:
+        - pattern: "package.nw"
+          weight: 100
+      binary_signatures:
+        - pattern: "nw.js"
+          type: string
+          weight: 80
+        - pattern: "node-webkit"
+          type: string
+          weight: 90
+      threshold: 50
+
+# =============================================================================
+# VERSION EXTRACTION
+# =============================================================================
+
+version_extraction:
+  electron:
+    binary_patterns:
+      - regex: 'Chrome/[\d.]+\s+Electron/([\d.]+)'
+        group: 1
+      - regex: 'Electron/([\d.]+)'
+        group: 1
+  tauri:
+    binary_patterns:
+      - regex: 'tauri@([\d.]+)'
+        group: 1
+
+# =============================================================================
+# SECURITY ANALYSIS
+# =============================================================================
+
+analysis:
+  electron:
+    security_settings:
+      - name: "nodeIntegration"
+        search_patterns:
+          - 'nodeIntegration:\s*(true|false)'
+          - 'nodeIntegration\s*=\s*(true|false)'
+        secure_value: "false"
+        insecure_value: "true"
+        risk_if_insecure: "CRITICAL"
+        description: "Allows Node.js in renderer process"
+
+      - name: "contextIsolation"
+        search_patterns:
+          - 'contextIsolation:\s*(true|false)'
+        secure_value: "true"
+        insecure_value: "false"
+        risk_if_insecure: "HIGH"
+        description: "Isolates preload scripts from web content"
+
+      - name: "sandbox"
+        search_patterns:
+          - 'sandbox:\s*(true|false)'
+        secure_value: "true"
+        insecure_value: "false"
+        risk_if_insecure: "MEDIUM"
+        description: "Enables Chromium sandbox"
+
+      - name: "webSecurity"
+        search_patterns:
+          - 'webSecurity:\s*(true|false)'
+        secure_value: "true"
+        insecure_value: "false"
+        risk_if_insecure: "HIGH"
+        description: "Enforces same-origin policy"
+
+      - name: "allowRunningInsecureContent"
+        search_patterns:
+          - 'allowRunningInsecureContent:\s*(true|false)'
+        secure_value: "false"
+        insecure_value: "true"
+        risk_if_insecure: "MEDIUM"
+        description: "Allows HTTPS pages to load HTTP content"
+
+      - name: "enableRemoteModule"
+        search_patterns:
+          - 'enableRemoteModule:\s*(true|false)'
+        secure_value: "false"
+        insecure_value: "true"
+        risk_if_insecure: "HIGH"
+        description: "Enables deprecated remote module"
+
+    ipc_patterns:
+      - pattern: 'ipcMain\.handle\s*\(\s*["'']([^"'']+)["'']'
+        direction: "main"
+        capture_group: 1
+      - pattern: 'ipcMain\.on\s*\(\s*["'']([^"'']+)["'']'
+        direction: "main"
+        capture_group: 1
+      - pattern: 'ipcRenderer\.send\s*\(\s*["'']([^"'']+)["'']'
+        direction: "renderer"
+        capture_group: 1
+      - pattern: 'ipcRenderer\.invoke\s*\(\s*["'']([^"'']+)["'']'
+        direction: "renderer"
+        capture_group: 1
+
+    dangerous_ipc_keywords:
+      - keyword: "exec"
+        risk: "CRITICAL"
+      - keyword: "shell"
+        risk: "CRITICAL"
+      - keyword: "spawn"
+        risk: "CRITICAL"
+      - keyword: "eval"
+        risk: "CRITICAL"
+      - keyword: "file"
+        risk: "HIGH"
+      - keyword: "fs"
+        risk: "HIGH"
+      - keyword: "write"
+        risk: "HIGH"
+      - keyword: "delete"
+        risk: "HIGH"
+      - keyword: "read"
+        risk: "MEDIUM"
+      - keyword: "path"
+        risk: "MEDIUM"
+
+  tauri:
+    dangerous_permissions:
+      - permission: "shell"
+        risk: "HIGH"
+        description: "Can execute shell commands"
+      - permission: "fs"
+        risk: "HIGH"
+        description: "File system access"
+      - permission: "process"
+        risk: "MEDIUM"
+        description: "Process management"
+
+# =============================================================================
+# STEALTH FEATURE DETECTION
+# =============================================================================
+
+stealth_detection:
+  electron:
+    patterns:
+      - name: "Content Protection"
+        description: "Window hidden from screen capture/recording"
+        patterns:
+          - 'setContentProtection\s*\('
+          - '\.setContentProtection\('
+          - 'contentProtection:\s*true'
+          - 'undetectability'
+        risk: "CRITICAL"
+
+      - name: "Always On Top"
+        description: "Window stays above other windows"
+        patterns:
+          - 'setAlwaysOnTop\s*\(\s*true'
+          - 'alwaysOnTop:\s*true'
+        risk: "LOW"
+
+      - name: "Skip Taskbar"
+        description: "Window hidden from taskbar"
+        patterns:
+          - 'setSkipTaskbar\s*\(\s*true'
+          - 'skipTaskbar:\s*true'
+        risk: "MEDIUM"
+
+      - name: "Visible On All Workspaces"
+        description: "Window visible on all virtual desktops"
+        patterns:
+          - 'setVisibleOnAllWorkspaces\s*\(\s*true'
+          - 'visibleOnAllWorkspaces:\s*true'
+        risk: "LOW"
+
+      - name: "Transparent Window"
+        description: "Electron window with transparent background"
+        patterns:
+          - 'transparent:\s*true'
+          - 'BrowserWindow.*transparent'
+        risk: "MEDIUM"
+
+      - name: "Frameless Window"
+        description: "Window without title bar or frame"
+        patterns:
+          - 'frame:\s*false'
+          - 'titleBarStyle.*hidden'
+        risk: "LOW"
+
+  tauri:
+    patterns:
+      - name: "Content Protection"
+        description: "Window hidden from screen capture"
+        patterns:
+          - 'setContentProtected'
+          - 'content_protected'
+          - 'allow-set-content-protected'
+        risk: "HIGH"
+
+# =============================================================================
+# TELEMETRY DETECTION
+# =============================================================================
+
+telemetry_detection:
+  services:
+    - name: "Sentry"
+      patterns:
+        - 'sentry.io'
+        - '@sentry/electron'
+        - 'Sentry.init'
+      category: "error_tracking"
+
+    - name: "Segment"
+      patterns:
+        - 'segment.io'
+        - 'segment.com'
+        - 'analytics.track'
+      category: "analytics"
+
+    - name: "Statsig"
+      patterns:
+        - 'statsig'
+        - 'Statsig.initialize'
+      category: "feature_flags"
+
+    - name: "Datadog"
+      patterns:
+        - 'datadoghq'
+        - '@datadog/'
+        - 'dd-trace'
+      category: "monitoring"
+
+    - name: "Mixpanel"
+      patterns:
+        - 'mixpanel'
+      category: "analytics"
+
+    - name: "Amplitude"
+      patterns:
+        - 'amplitude'
+      category: "analytics"
+
+    - name: "PostHog"
+      patterns:
+        - 'posthog'
+      category: "analytics"
+
+    - name: "Google Analytics"
+      patterns:
+        - 'google-analytics'
+        - 'gtag('
+      category: "analytics"
+
+# =============================================================================
+# API ENDPOINT EXTRACTION
+# =============================================================================
+
+api_extraction:
+  url_patterns:
+    - pattern: 'https?://[a-zA-Z0-9\-._~:/?#\[\]@!$&''()*+,;=%]+'
+      exclude:
+        - 'localhost'
+        - '127.0.0.1'
+        - 'example.com'
+        - '.svg'
+        - '.png'
+        - '.jpg'
+        - '.css'
+        - '.woff'
+
+  classifications:
+    - keywords: ["api", "v1", "v2", "graphql"]
+      purpose: "API"
+    - keywords: ["auth", "login", "oauth", "token"]
+      purpose: "Authentication"
+    - keywords: ["sentry", "bugsnag"]
+      purpose: "Error Tracking"
+    - keywords: ["segment", "analytics", "mixpanel"]
+      purpose: "Analytics"
+    - keywords: ["cdn", "static", "assets"]
+      purpose: "Static Assets"
+    - keywords: ["ws://", "wss://"]
+      purpose: "WebSocket"
+
+# =============================================================================
+# RISK SCORING
+# =============================================================================
+
+risk_scoring:
+  weights:
+    CRITICAL: 40
+    HIGH: 20
+    MEDIUM: 10
+    LOW: 2
+    UNKNOWN: 5
+
+  thresholds:
+    CRITICAL: 100
+    HIGH: 50
+    MEDIUM: 20
+    LOW: 0
+
+# =============================================================================
+# BROWSER EXTENSION ANALYSIS
+# =============================================================================
+
+extension_analysis:
+  dangerous_permissions:
+    # CRITICAL - Full system access
+    - permission: "debugger"
+      risk: "CRITICAL"
+      description: "Can attach to tabs and intercept all network traffic"
+    - permission: "nativeMessaging"
+      risk: "CRITICAL"
+      description: "Can communicate with native applications on the host"
+    - permission: "proxy"
+      risk: "CRITICAL"
+      description: "Can intercept and modify all network requests"
+    - permission: "vpnProvider"
+      risk: "CRITICAL"
+      description: "Can create VPN connections"
+    - permission: "management"
+      risk: "CRITICAL"
+      description: "Can manage other extensions (install, enable, disable)"
+
+    # HIGH - Sensitive data access
+    - permission: "tabs"
+      risk: "HIGH"
+      description: "Can read URL, title, and status of all tabs"
+    - permission: "tabCapture"
+      risk: "HIGH"
+      description: "Can capture tab content as a media stream"
+    - permission: "desktopCapture"
+      risk: "HIGH"
+      description: "Can capture screen, window, or tab content"
+    - permission: "cookies"
+      risk: "HIGH"
+      description: "Can read and modify cookies for any site"
+    - permission: "webRequest"
+      risk: "HIGH"
+      description: "Can observe and analyze all network traffic"
+    - permission: "webRequestBlocking"
+      risk: "HIGH"
+      description: "Can block and modify network requests"
+    - permission: "history"
+      risk: "HIGH"
+      description: "Can read and modify browsing history"
+    - permission: "bookmarks"
+      risk: "HIGH"
+      description: "Can read and modify bookmarks"
+    - permission: "downloads"
+      risk: "HIGH"
+      description: "Can initiate, monitor, and modify downloads"
+    - permission: "browsingData"
+      risk: "HIGH"
+      description: "Can delete browsing data"
+    - permission: "contentSettings"
+      risk: "HIGH"
+      description: "Can change content settings (JS, cookies, plugins)"
+    - permission: "privacy"
+      risk: "HIGH"
+      description: "Can change privacy-related settings"
+    - permission: "<all_urls>"
+      risk: "HIGH"
+      description: "Access to all URLs"
+    - permission: "http://*/*"
+      risk: "HIGH"
+      description: "Access to all HTTP URLs"
+    - permission: "https://*/*"
+      risk: "HIGH"
+      description: "Access to all HTTPS URLs"
+
+    # MEDIUM - Moderate risk
+    - permission: "activeTab"
+      risk: "MEDIUM"
+      description: "Temporary access to the active tab on user gesture"
+    - permission: "notifications"
+      risk: "MEDIUM"
+      description: "Can display system notifications"
+    - permission: "clipboardRead"
+      risk: "MEDIUM"
+      description: "Can read clipboard contents"
+    - permission: "clipboardWrite"
+      risk: "MEDIUM"
+      description: "Can write to clipboard"
+    - permission: "geolocation"
+      risk: "MEDIUM"
+      description: "Can access geographic location"
+    - permission: "webNavigation"
+      risk: "MEDIUM"
+      description: "Can observe and analyze navigation events"
+
+    # LOW - Minimal risk
+    - permission: "storage"
+      risk: "LOW"
+      description: "Can store data locally"
+    - permission: "alarms"
+      risk: "LOW"
+      description: "Can schedule periodic tasks"
+    - permission: "contextMenus"
+      risk: "LOW"
+      description: "Can add items to the context menu"
+    - permission: "identity"
+      risk: "LOW"
+      description: "Can get OAuth2 access tokens"
+
+  suspicious_patterns:
+    - name: "Dynamic Code Execution"
+      description: "Dynamically evaluates code at runtime"
+      patterns:
+        - 'eval\s*\('
+        - 'new\s+Function\s*\('
+        - 'setTimeout\s*\(\s*[''"]'
+        - 'setInterval\s*\(\s*[''"]'
+      risk: "HIGH"
+
+    - name: "Remote Script Loading"
+      description: "Loads and executes scripts from remote servers"
+      patterns:
+        - 'createElement\s*\(\s*[''"]script[''"]'
+        - 'document\.write\s*\(.*<script'
+        - 'import\s*\(.*https?://'
+        - 'fetch\s*\(.*\.js[''"]'
+      risk: "HIGH"
+
+    - name: "External Data Transmission"
+      description: "Sends data to external servers"
+      patterns:
+        - 'XMLHttpRequest'
+        - 'fetch\s*\(\s*[''"]https?://'
+        - 'navigator\.sendBeacon'
+        - 'WebSocket\s*\('
+      risk: "MEDIUM"
+
+    - name: "Crypto Mining Indicators"
+      description: "Patterns associated with cryptocurrency mining"
+      patterns:
+        - 'CryptoNight'
+        - 'coin-?hive'
+        - 'stratum\+tcp'
+        - 'hashrate'
+        - 'miner\.start'
+      risk: "CRITICAL"
+
+    - name: "Keylogger Patterns"
+      description: "Captures keyboard input"
+      patterns:
+        - 'addEventListener\s*\(\s*[''"]key(down|up|press)[''"]'
+        - 'onkey(down|up|press)\s*='
+        - 'document\.onkey'
+      risk: "HIGH"
+
+    - name: "DOM Overlay Injection"
+      description: "Injects overlay elements into pages"
+      patterns:
+        - 'position:\s*fixed.*z-index:\s*\d{4,}'
+        - 'document\.body\.appendChild'
+        - 'insertAdjacentHTML'
+      risk: "MEDIUM"
+
+    - name: "Dynamic HTML Injection"
+      description: "Dynamically modifies page content with raw HTML"
+      patterns:
+        - '\.innerHTML\s*='
+        - '\.outerHTML\s*='
+        - 'document\.write\s*\('
+      risk: "MEDIUM"
+
+  stealth_patterns:
+    - name: "Screen/Tab Capture"
+      description: "Captures screen or tab content"
+      patterns:
+        - 'chrome\.tabCapture'
+        - 'chrome\.desktopCapture'
+        - 'getDisplayMedia'
+        - 'navigator\.mediaDevices\.getUserMedia.*video'
+      risk: "CRITICAL"
+
+    - name: "Tab Script Injection"
+      description: "Injects scripts into other tabs"
+      patterns:
+        - 'chrome\.tabs\.executeScript'
+        - 'chrome\.scripting\.executeScript'
+        - 'chrome\.tabs\.insertCSS'
+      risk: "HIGH"
+
+    - name: "Clipboard Monitoring"
+      description: "Monitors or modifies clipboard"
+      patterns:
+        - 'navigator\.clipboard\.readText'
+        - 'navigator\.clipboard\.read\b'
+        - 'document\.execCommand\s*\(\s*[''"]paste[''"]'
+      risk: "MEDIUM"
+
+    - name: "Network Interception"
+      description: "Intercepts or modifies network traffic"
+      patterns:
+        - 'chrome\.webRequest\.onBeforeRequest'
+        - 'chrome\.webRequest\.onBeforeSendHeaders'
+        - 'chrome\.webRequest\.onHeadersReceived'
+        - 'chrome\.debugger\.attach'
+      risk: "CRITICAL"
+
+  # Phase 4 (Wave 5) — WinUI 3 / UWP detection rule entries (FRM-05, FRM-08).
+  # Consumed by pkg/detect when classifying directories. Adding additional
+  # patterns here picks up the new framework via the manifest-driven path
+  # without code edits.
+  detection_rules:
+    winui_app:
+      file_patterns:
+        - "*Microsoft.WinUI*.deps.json"
+        - "*Microsoft.WindowsAppSDK*.deps.json"
+        - "Microsoft.UI.Xaml.dll"
+      binary_imports:
+        - "Microsoft.UI.Xaml.dll"
+      confidence: high
+    uwp_app:
+      file_patterns:
+        - "AppxManifest.xml"
+      xml_namespaces:
+        - "http://schemas.microsoft.com/appx/manifest/uap/windows10"
+      confidence: confirmed
+
+  cheating_keywords:
+    - "interview"
+    - "cheat"
+    - "cheating"
+    - "copilot"
+    - "proctoring"
+    - "proctor"
+    - "stealth"
+    - "undetectable"
+    - "screen share"
+    - "screenshare"
+    - "exam"
+    - "assessment"
+    - "coding test"
+    - "leetcode"
+    - "hackerrank"
+    - "codesignal"
+    - "codility"
+    - "auto solve"
+    - "autosolve"
+    - "answer"

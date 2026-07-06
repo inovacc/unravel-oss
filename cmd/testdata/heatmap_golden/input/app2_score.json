@@ -1,0 +1,11 @@
+{
+  "kb_id": "kb_app2",
+  "package": "app2",
+  "coverage": {
+    "dimensions_at_80": 7,
+    "mean_score": 60.4
+  },
+  "iterations": [
+    { "id": "W-11", "framework": "electron", "loop_exit": false }
+  ]
+}

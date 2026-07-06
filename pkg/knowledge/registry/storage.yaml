@@ -1,0 +1,24 @@
+category: storage
+applies_to: [whatsapp, teams, slack, linkedin, discord, outlook, telegram]
+facts:
+
+  - key: primary_db_kind
+    value_format: enum:IndexedDB|SQLite|leveldb|filesystem|other|unknown
+    candidates_q: "IndexedDB OR Dexie OR sqlite OR leveldb OR createObjectStore"
+    gap_prompt: |
+      What kind of persistent store holds the bulk of message data?
+
+  - key: indexeddb_db_names
+    value_format: json
+    candidates_q: "createObjectStore OR indexedDB.open OR Dexie"
+    gap_prompt: |
+      List the IndexedDB database names the client opens. Return JSON array
+      of strings. e.g. ["wawc","wawc_db_enc","model-storage"].
+
+  - key: media_cache_root
+    value_format: string
+    candidates_q: "media OR Cache OR thumbnail OR mediaUrl"
+    gap_prompt: |
+      Where (storage kind + key/path prefix) does the client cache
+      downloaded media (images, voice notes)? Return "<kind>:<location>"
+      or "unknown".

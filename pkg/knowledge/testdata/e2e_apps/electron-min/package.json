@@ -1,0 +1,7 @@
+{
+  "name": "electron-min",
+  "version": "0.0.1",
+  "dependencies": {
+    "lodash": "4.17.20"
+  }
+}

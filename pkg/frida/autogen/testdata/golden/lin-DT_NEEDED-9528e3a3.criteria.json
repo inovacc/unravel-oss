@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "script": "lin-DT_NEEDED-9528e3a3.js",
+  "hooks": [
+    {
+      "id": "linux-9528e3a3",
+      "description": "unravel-autogen-v1: {\"seam_id\":\"9528e3a3\",\"platform\":\"linux\",\"target_path\":\"libdl.so.2\",\"tag\":\"DT_NEEDED\",\"expected_events\":[\"preflight_failed\",\"hook_loaded\"],\"pre_attach_check\":\"ptrace_scope \\u003c= 1 (host kernel.yama.ptrace_scope policy)\",\"severity\":\"medium\"}",
+      "criteria": [
+        {
+          "op": "present",
+          "target": "seam_id"
+        }
+      ]
+    }
+  ]
+}

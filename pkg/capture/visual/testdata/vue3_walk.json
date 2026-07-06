@@ -1,0 +1,9 @@
+[
+  {
+    "name": "App",
+    "children": [
+      { "name": "NavBar", "children": [] },
+      { "name": "RouterView", "children": [{ "name": "HomePage", "children": [] }] }
+    ]
+  }
+]

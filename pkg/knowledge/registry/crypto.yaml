@@ -1,0 +1,95 @@
+# Crypto-related questions worth answering for any messaging client. Each
+# fact is one row in app_facts. The `applies_to` list bounds which apps the
+# question is meaningful for; an empty list means "all known apps".
+#
+# When a question applies to multiple apps, the row is duplicated per app
+# (one row per (app, category, key) triple).
+category: crypto
+applies_to: [whatsapp, teams, slack, linkedin, discord, outlook, telegram]
+facts:
+
+  - key: db_cipher
+    value_format: enum:AES-CBC|AES-GCM|ChaCha20|none|unknown
+    candidates_q: "DbEncryption OR EncryptionKey OR cipher OR aes OR chacha"
+    gap_prompt: |
+      Find the symmetric cipher used to encrypt the local message database
+      at rest. Inspect modules whose names contain "DbEncryption",
+      "EncryptionKey", or which call crypto.subtle.deriveKey/encrypt.
+      Return one of: AES-CBC, AES-GCM, ChaCha20, none, unknown.
+
+  - key: db_key_length_bits
+    value_format: int
+    candidates_q: "DbEncryption OR EncryptionKey OR keyLength OR keySize"
+    gap_prompt: |
+      Find the symmetric key length in bits used by the local DB cipher.
+      Look for constants like length:128, length:256 in the same module
+      that defines db_cipher. Return only the integer.
+
+  - key: db_kdf
+    value_format: enum:HKDF|PBKDF2|scrypt|argon2|none|unknown
+    candidates_q: "deriveKey OR HKDF OR PBKDF2 OR scrypt OR importKey"
+    gap_prompt: |
+      Find the KDF used to derive the local DB encryption key. Search for
+      crypto.subtle.deriveKey arguments — name will be HKDF / PBKDF2 etc.
+      Return one of: HKDF, PBKDF2, scrypt, argon2, none, unknown.
+
+  - key: db_kdf_hash
+    value_format: enum:SHA-256|SHA-384|SHA-512|SHA-1|unknown
+    candidates_q: "deriveKey OR hash:'SHA"
+    gap_prompt: |
+      Find the hash function paired with the KDF (e.g. {hash:"SHA-256"}).
+      Return one of: SHA-256, SHA-384, SHA-512, SHA-1, unknown.
+
+  - key: db_key_storage
+    value_format: string
+    candidates_q: "wawc_db_enc OR keys OR fts_hmac OR IndexedDB OR Dexie"
+    gap_prompt: |
+      Identify where the encrypted DB key material is persisted. Expected
+      format: "<storage_kind>:<db_name>.<table>" e.g. "IndexedDB:wawc_db_enc.keys".
+
+  - key: db_key_rotation_days
+    value_format: int
+    candidates_q: "WEEK_MILLISECONDS OR DAY_MILLISECONDS OR _expiration"
+    gap_prompt: |
+      Find the key rotation window in days. Often expressed as
+      WEEK_MILLISECONDS*N or stored in an "_expiration" field. Return only
+      the integer days. If no rotation, return -1.
+
+  - key: search_index_keyed_hash
+    value_format: enum:HMAC-SHA256|HMAC-SHA512|none|unknown
+    candidates_q: "fts_hmac OR HMAC OR signKey"
+    gap_prompt: |
+      Find the keyed-hash function used to index encrypted text for
+      full-text search. Look for {name:"HMAC", hash:"SHA-256"}.
+      Return: HMAC-SHA256, HMAC-SHA512, none, unknown.
+
+  - key: e2ee_protocol
+    value_format: enum:Signal|MTProto|MLS|Custom|none|unknown
+    candidates_q: "libsignal OR SignalProtocol OR X3DH OR SignedPreKey OR MTProto OR MLS"
+    gap_prompt: |
+      Identify the end-to-end encryption protocol. WhatsApp uses Signal,
+      Telegram uses MTProto, modern messengers may use MLS. Return one of:
+      Signal, MTProto, MLS, Custom, none, unknown.
+
+  - key: e2ee_message_payload_format
+    value_format: enum:protobuf|JSON|MessagePack|XML|other|unknown
+    candidates_q: "decodeProtobuf OR ProtobufsSpec OR Spec OR Pb"
+    gap_prompt: |
+      Find the wire-format used to encode the encrypted message payload
+      before transport. Look for protobuf decoders, XML wrappers, etc.
+      Return one of: protobuf, JSON, MessagePack, XML, other, unknown.
+
+  - key: noise_handshake_present
+    value_format: enum:yes|no|unknown
+    candidates_q: "Noise OR XX OR IK OR handshake"
+    gap_prompt: |
+      Does the client wrap its WebSocket transport in a Noise Protocol
+      handshake (XX / IK / etc.)? Return one of: yes, no, unknown.
+
+  - key: tls_cert_pinning
+    value_format: enum:strict|relaxed|none|unknown
+    candidates_q: "certPin OR sslPin OR fingerprint OR x509"
+    gap_prompt: |
+      Does the client pin the server TLS certificate or its public-key
+      fingerprint? strict = explicit pinning code; relaxed = pinning
+      configurable; none = trust system store; unknown = no signal.

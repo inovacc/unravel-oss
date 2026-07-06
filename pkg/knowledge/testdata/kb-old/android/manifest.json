@@ -1,0 +1,5 @@
+{
+  "permissions": [
+    {"name": "INTERNET", "dangerous": false}
+  ]
+}

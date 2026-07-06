@@ -1,0 +1,13 @@
+module example.com/replaceapp
+
+go 1.22
+
+require (
+	github.com/public/lib v1.0.0
+	github.com/forked/lib v1.5.0
+	github.com/local/lib v0.0.0
+)
+
+replace github.com/forked/lib => internal.corp.example/forked-lib v1.5.1
+
+replace github.com/local/lib => ../local-lib

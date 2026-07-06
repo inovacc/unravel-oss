@@ -1,0 +1,23 @@
+[
+  {"name": "internetClient", "namespace": "", "index": 0},
+  {"name": "internetClientServer", "namespace": "", "index": 1},
+  {"name": "privateNetworkClientServer", "namespace": "", "index": 2},
+  {"name": "webcam", "namespace": "device", "index": 3},
+  {"name": "microphone", "namespace": "device", "index": 4},
+  {"name": "location", "namespace": "device", "index": 5},
+  {"name": "bluetooth", "namespace": "device", "index": 6},
+  {"name": "radios", "namespace": "device", "index": 7},
+  {"name": "wiFiControl", "namespace": "device", "index": 8},
+  {"name": "usb", "namespace": "device", "index": 9},
+  {"name": "humaninterfacedevice", "namespace": "device", "index": 10},
+  {"name": "phoneCall", "namespace": "uap", "index": 11},
+  {"name": "voipCall", "namespace": "uap", "index": 12},
+  {"name": "chat", "namespace": "", "index": 13},
+  {"name": "appointments", "namespace": "", "index": 14},
+  {"name": "contacts", "namespace": "", "index": 15},
+  {"name": "userAccountInformation", "namespace": "uap", "index": 16},
+  {"name": "graphicsCapture", "namespace": "unknown:http://schemas.microsoft.com/appx/manifest/uap/windows10/11", "index": 17},
+  {"name": "graphicsCaptureProgrammatic", "namespace": "unknown:http://schemas.microsoft.com/appx/manifest/uap/windows10/11", "index": 18},
+  {"name": "graphicsCaptureWithoutBorder", "namespace": "unknown:http://schemas.microsoft.com/appx/manifest/uap/windows10/11", "index": 19},
+  {"name": "runFullTrust", "namespace": "rescap", "index": 20}
+]

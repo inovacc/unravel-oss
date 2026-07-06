@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-05-02T00:00:00Z",
+  "framework": "electron",
+  "seams": [
+    {
+      "kind": "IAT",
+      "confidence": "high",
+      "framework": "electron",
+      "evidence": [{"type": "pe-import", "path": "app.exe"}],
+      "reachable_runtime": true
+    }
+  ],
+  "summary": {"total_seams": 1, "by_kind": {"IAT": 1}, "by_confidence": {"high": 1}}
+}

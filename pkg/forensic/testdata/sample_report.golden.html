@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>Forensic Report - Sample App</title>
+<style>
+:root {
+  --severity-block: #b00; --severity-block-bg: #fee;
+  --severity-flag: #b80;  --severity-flag-bg: #ffd;
+  --severity-pass: #060;  --severity-pass-bg: #efe;
+}
+body { font: 14px -apple-system, system-ui, sans-serif; max-width: 900px; margin: 2em auto; color: #222; }
+h1, h2 { border-bottom: 1px solid #ccc; padding-bottom: 0.2em; }
+.badge-block { color: var(--severity-block); background: var(--severity-block-bg); padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+.badge-flag  { color: var(--severity-flag);  background: var(--severity-flag-bg);  padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+.badge-pass  { color: var(--severity-pass);  background: var(--severity-pass-bg);  padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+.badge-info  { color: #036; background: #eef; padding: 2px 6px; border-radius: 3px; font-weight: bold; }
+table.risk-matrix { border-collapse: collapse; }
+table.risk-matrix td, table.risk-matrix th { border: 1px solid #888; padding: 8px 12px; min-width: 80px; text-align: center; }
+pre.curl { background: #f4f4f4; padding: 1em; overflow-x: auto; font-size: 12px; }
+img.screenshot { max-width: 100%; border: 1px solid #ccc; }
+.tldr { font-size: 1.1em; line-height: 1.5; }
+</style></head><body>
+<h1>Forensic Report: Sample App</h1>
+
+<section aria-label="Executive Summary"><h2>Executive Summary</h2>
+<p><em>Run with <code>--ai</code> for an MCP-generated executive summary.</em></p>
+</section>
+
+<section aria-label="Risk Matrix"><h2>Risk Matrix</h2>
+<table class="risk-matrix" role="table"><caption>3x3 likelihood vs impact (ISO 27005 / OWASP)</caption>
+<tr><th></th><th>Low Impact</th><th>Med Impact</th><th>High Impact</th></tr>
+<tr><th>High Likelihood</th><td>L3I1</td><td>L3I2</td><td>L3I3</td></tr>
+<tr><th>Med Likelihood</th><td>L2I1</td><td>L2I2</td><td>L2I3</td></tr>
+<tr><th>Low Likelihood</th><td>L1I1</td><td>L1I2</td><td>L1I3</td></tr>
+</table></section>
+
+<section aria-label="Findings"><h2>Findings</h2>
+
+<div id="finding-0"><h3><span class="badge-block" aria-label="severity BLOCK">[BLOCK]</span> Hardcoded API key in source</h3>
+<p>An API key was found embedded in a JS bundle.</p>
+<p>CWE: <a href="https://cwe.mitre.org/data/definitions/798.html">CWE-798</a></p>
+</div>
+<div id="finding-1"><h3><span class="badge-flag" aria-label="severity FLAG">[FLAG]</span> CSP allows unsafe-inline</h3>
+<p>Content-Security-Policy permits inline scripts.</p>
+<p>CWE: <a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693</a></p>
+</div>
+<div id="finding-2"><h3><span class="badge-pass" aria-label="severity PASS">[PASS]</span> Analytics SDK present</h3>
+<p>Standard analytics SDK detected; no exfiltration observed.</p>
+
+</div>
+</section>
+
+<section aria-label="Replay Reproducibility"><h2>Replay Reproducibility</h2>
+<h3 id="replay-0">auth-login</h3><pre class="curl">curl -X POST https://api.example.com/login</pre>
+</section>
+
+
+
+<section aria-label="CWE Mappings"><h2>CWE Mappings</h2><ul>
+<li>Hardcoded API key in source -&gt; <a href="https://cwe.mitre.org/data/definitions/798.html">CWE-798</a></li><li>CSP allows unsafe-inline -&gt; <a href="https://cwe.mitre.org/data/definitions/693.html">CWE-693</a></li>
+</ul></section>
+
+
+
+</body></html>

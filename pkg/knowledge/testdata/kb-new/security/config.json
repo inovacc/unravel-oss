@@ -1,0 +1,8 @@
+{
+  "csp": "default-src 'self' 'unsafe-inline'",
+  "webPreferences": {
+    "sandbox": false,
+    "contextIsolation": true,
+    "nodeIntegration": false
+  }
+}

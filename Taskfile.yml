@@ -1,0 +1,283 @@
+version: 3
+
+vars:
+  MAIN_PACKAGE: .
+  BUILD_DIR: bin
+  BINARY_NAME: unravel
+  COVERAGE_FILE: coverage.out
+  # GOPATH bin holds the installed `unravel` binary used by the service:* tasks
+  # (go install default; on PATH and shared like any other Go tool).
+  GOPATHBIN:
+    sh: go env GOPATH
+
+tasks:
+  # === INFORMATION ===
+  default:
+    desc: List all available tasks
+    cmds:
+      - task --list
+
+  # === CODE GENERATION ===
+  generate:
+    desc: Generate documentation, command tree, etc.
+    cmds:
+      - go generate ./...
+
+  # === BUILD TASKS ===
+  build:
+    desc: Build the application
+    deps: [ generate ]
+    cmds:
+      - cmd: mkdir -p {{.BUILD_DIR}}
+        platforms: [ linux, darwin ]
+      - cmd: if not exist {{.BUILD_DIR}} mkdir {{.BUILD_DIR}}
+        platforms: [ windows ]
+      - cmd: go build -ldflags="-s -w" -o {{.BUILD_DIR}}/{{.BINARY_NAME}} {{.MAIN_PACKAGE}}
+        platforms: [ linux, darwin ]
+      - cmd: go build -ldflags="-s -w" -o {{.BUILD_DIR}}\{{.BINARY_NAME}}.exe {{.MAIN_PACKAGE}}
+        platforms: [ windows ]
+
+  build:all:
+    desc: Build for all platforms (Linux, Windows)
+    deps: [ generate ]
+    cmds:
+      - cmd: mkdir -p {{.BUILD_DIR}}
+        platforms: [ linux, darwin ]
+      - cmd: if not exist {{.BUILD_DIR}} mkdir {{.BUILD_DIR}}
+        platforms: [ windows ]
+      - cmd: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-linux-amd64 {{.MAIN_PACKAGE}}
+        platforms: [ linux, darwin ]
+      - cmd: set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0&& go build -ldflags="-s -w" -o {{.BUILD_DIR}}\{{.BINARY_NAME}}-linux-amd64 {{.MAIN_PACKAGE}}
+        platforms: [ windows ]
+      - cmd: GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -ldflags="-s -w" -o {{.BUILD_DIR}}/{{.BINARY_NAME}}-windows-amd64.exe {{.MAIN_PACKAGE}}
+        platforms: [ linux, darwin ]
+      - cmd: set GOOS=windows&& set GOARCH=amd64&& set CGO_ENABLED=0&& go build -ldflags="-s -w" -o {{.BUILD_DIR}}\{{.BINARY_NAME}}-windows-amd64.exe {{.MAIN_PACKAGE}}
+        platforms: [ windows ]
+
+  install:
+    desc: Install unravel to $GOPATH/bin
+    cmds:
+      - go install -ldflags="-s -w" {{.MAIN_PACKAGE}}
+
+  # === SERVICE (host-singleton supervisor daemon) ===
+  # Mirrors the weaver service lifecycle. unravel has no web UI, so there is no
+  # web:build step; the daemon is launched as `unravel daemon serve`. Note that
+  # service:stop kills ALL unravel.exe processes — including the MCP server that
+  # Claude Code autospawns — so after a deploy you may need to /mcp reconnect.
+  service:stop:
+    desc: Stop the running unravel supervisor daemon (and any unravel processes)
+    ignore_error: true
+    cmds:
+      - cmd: powershell -NoProfile -Command "Get-Process unravel -ErrorAction SilentlyContinue | Stop-Process -Force; Start-Sleep -Seconds 2"
+        platforms: [ windows ]
+      - cmd: pkill -x unravel || true
+        platforms: [ linux, darwin ]
+
+  service:start:
+    desc: Start the installed unravel supervisor daemon ($GOPATH/bin), detached
+    cmds:
+      - cmd: powershell -NoProfile -Command "Start-Process -FilePath (Join-Path '{{.GOPATHBIN}}' 'bin\unravel.exe') -ArgumentList 'daemon','serve' -WindowStyle Hidden"
+        platforms: [ windows ]
+      - cmd: nohup "{{.GOPATHBIN}}/bin/unravel" daemon serve >/dev/null 2>&1 &
+        platforms: [ linux, darwin ]
+
+  service:deploy:
+    desc: Stop daemon, reinstall fresh binary, and restart the supervisor
+    cmds:
+      - task: service:stop
+      - task: install
+      - task: service:start
+      - cmd: powershell -NoProfile -Command "Start-Sleep -Seconds 10; Get-Process unravel -ErrorAction SilentlyContinue | Select-Object Id,StartTime | Format-Table"
+        platforms: [ windows ]
+      - cmd: sleep 5; pgrep -ax unravel || echo "(daemon not visible via pgrep)"
+        platforms: [ linux, darwin ]
+
+  # === TEST TASKS ===
+  test:
+    desc: Run all tests with coverage
+    cmds:
+      - go test -v -race -coverprofile={{.COVERAGE_FILE}} ./...
+
+  test:coverage:
+    desc: Generate HTML coverage report
+    deps: [ test ]
+    cmds:
+      - go tool cover -html={{.COVERAGE_FILE}} -o coverage.html
+      - echo "Coverage report generated at coverage.html"
+
+  test:cover:
+    desc: Run tests and show coverage percentage
+    cmds:
+      - go test -coverprofile={{.COVERAGE_FILE}} ./...
+      - cmd: go tool cover -func={{.COVERAGE_FILE}} | findstr "total:"
+        platforms: [ windows ]
+      - cmd: go tool cover -func={{.COVERAGE_FILE}} | grep "total:"
+        platforms: [ linux, darwin ]
+
+  test:unit:
+    desc: Run unit tests only (skip integration)
+    cmds:
+      - go test -v -short ./...
+
+  test:oracle:
+    desc: "Tier-2/3 oracle diff vs installed ilspycmd 8.2 (env-gated; needs .NET locally)."
+    cmds:
+      - go test -tags=oracle ./pkg/dotnet/clr/... -count=1 -v
+    env:
+      DOTNET_ROLL_FORWARD: Major
+
+  test:clr:docker:
+    desc: "Acceptance proof: run pure-Go CLR Tier-1 suite in a Docker image with no .NET."
+    env:
+      DOCKER_BUILDKIT: "1"
+    cmds:
+      - docker build -f tools/clrgate/Dockerfile -t unravel-clrgate .
+      - docker run --rm unravel-clrgate
+
+  ci:kb-capture:
+    desc: "Run v2.6 CI carry-over chain locally (Linux+Docker required); mirrors GHA workflow kb-capture-ci"
+    cmds:
+      - go test -tags=integration -run "TestKBCapture_RealAPK_QuerySurface|TestKBCapture_AllPlatforms_QuerySurface" ./cmd/ -count=1 -timeout=600s -v
+
+  ci:test:
+    desc: "Local-parity alias of CI quality-check job (go test ./...). Existing CI gate unchanged. P62 / DEPT-01."
+    cmds:
+      - go test ./... -count=1
+
+  cover:gate:
+    desc: "Run coverage and enforce floor (default 47%). Use FLOOR var to override: task cover:gate FLOOR=50"
+    vars:
+      FLOOR: '{{.FLOOR | default "47"}}'
+    cmds:
+      - go run ./internal/devtools/covergate -floor {{.FLOOR}}
+
+  ci:full:
+    desc: "Aggregate local-CI gate: d09:check + lint + ci:test + cover:gate (mirrors quality-check job semantics)."
+    cmds:
+      - task: d09:check
+      - task: lint
+      - task: ci:test
+      - task: cover:gate
+
+  git:history:purge:path:
+    desc: Rewrite git history removing PATH_TO_REMOVE (default .claude)
+    vars:
+      PATH_TO_REMOVE: '{{.PATH_TO_REMOVE | default ".claude"}}'
+    cmds:
+      - cmd: pwsh -ExecutionPolicy Bypass -File scripts/git/remove_path_from_history.ps1 -PathToRemove "{{.PATH_TO_REMOVE}}"
+        platforms: [ windows ]
+      - cmd: bash scripts/git/remove_path_from_history.sh "{{.PATH_TO_REMOVE}}"
+        platforms: [ linux, darwin ]
+
+  git:history:purge:path:push:
+    desc: Rewrite history and force-push rewritten refs
+    vars:
+      PATH_TO_REMOVE: '{{.PATH_TO_REMOVE | default ".claude"}}'
+    cmds:
+      - cmd: pwsh -ExecutionPolicy Bypass -File scripts/git/remove_path_from_history.ps1 -PathToRemove "{{.PATH_TO_REMOVE}}" -Push
+        platforms: [ windows ]
+      - cmd: PUSH=true bash scripts/git/remove_path_from_history.sh "{{.PATH_TO_REMOVE}}"
+        platforms: [ linux, darwin ]
+
+  # === CODE QUALITY ===
+  fmt:
+    desc: Format all Go code
+    cmds:
+      - go fmt ./...
+      - goimports -w .
+
+  vet:
+    desc: Run go vet static analysis
+    # -unreachable=false: the ANTLR-generated parsers under
+    # pkg/transpile/languages/{python,java}/parser/generated/ emit 248 benign
+    # "unreachable code" diagnostics (a `return` followed by dead arms inside
+    # ANTLR's giant rule switch). go vet's `unreachable` analyzer does NOT honor
+    # the canonical `// Code generated ... DO NOT EDIT.` marker (verified
+    # empirically), and vet analyzes imported deps so package-list exclusion
+    # can't skip them either. Disabling that one analyzer loses no hand-written
+    # signal — every such diagnostic is in generated code. Real gate now (no
+    # `|| true` mask). See docs/BACKLOG.md VET-GENERATED-ANTLR.
+    cmds:
+      - go vet -unreachable=false ./...
+
+  d09:check:
+    desc: Enforce D-09 — only internal/ai and internal/mcp may import github.com/anthropics/anthropic-sdk-go directly. Exits 1 on violation.
+    cmds:
+      - go run ./internal/devtools/checkd09 .
+
+  lint:
+    desc: Run linter and auto-fix issues (also runs d09:check first)
+    deps: [ d09:check ]
+    cmds:
+      - golangci-lint run --fix ./... --timeout=5m
+
+  fix:
+    desc: Apply go fix rewrites for deprecated APIs (best-effort; partial-apply hints printed but not fatal)
+    cmds:
+      - cmd: go fix ./...
+        ignore_error: true
+
+  check:
+    desc: Run all quality checks (fix, fmt, vet, lint, test)
+    cmds:
+      - task: fix
+      - task: fmt
+      - task: vet
+      - task: lint
+      - task: test
+
+  # === RUN TASKS ===
+  run:
+    desc: Run the application
+    deps: [ generate ]
+    cmds:
+      - go run {{.MAIN_PACKAGE}}
+
+
+
+  # === DEPENDENCY MANAGEMENT ===
+  deps:
+    desc: Download and tidy dependencies
+    cmds:
+      - go mod download
+      - go mod tidy
+      - go mod verify
+
+  deps:upgrade:
+    desc: Upgrade all dependencies to latest versions
+    cmds:
+      - go get -u ./...
+      - go mod tidy
+      - go mod verify
+
+  # === CLEANUP ===
+  clean:
+    desc: Clean build artifacts and generated files
+    cmds:
+      - cmd: rm -rf {{.BUILD_DIR}}
+        ignore_error: true
+      - cmd: rm -f {{.COVERAGE_FILE}} coverage.html
+        ignore_error: true
+
+
+  # === DOCUMENTATION ===
+  cmdtree:
+    desc: Display command tree visualization
+    cmds:
+      - go run scripts/cmdtree/cmdtree.go
+
+  docs:
+    desc: Generate all documentation (COMMANDS.md and cmdtree.go)
+    cmds:
+      - go run scripts/cmdtree/cmdtree.go -out-docs docs/COMMANDS.md -out-go cmd/cmdtree.go
+      - echo "Documentation generated successfully"
+
+  docs:commands:
+    desc: Generate docs/COMMANDS.md from command definitions
+    cmds:
+      - go run scripts/cmdtree/cmdtree.go -out-docs docs/COMMANDS.md
+
+  docs:cmdtree:
+    desc: Generate cmd/cmdtree.go with embedded tree
+    cmds:
+      - go run scripts/cmdtree/cmdtree.go -out-go cmd/cmdtree.go

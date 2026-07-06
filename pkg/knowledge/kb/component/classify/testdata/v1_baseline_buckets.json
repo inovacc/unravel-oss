@@ -1,0 +1,12 @@
+{
+  "_comment": "Golden baseline for D-45-INTEGRATION-RUNS-RULE-PATH. See README.md.",
+  "_corpus": "minimal-3-module (auth + crypto + other)",
+  "_classifier": "rule",
+  "_captured_at": "2026-05-05",
+  "_phase": "45-03",
+  "buckets": {
+    "auth": 1,
+    "crypto": 1,
+    "other": 1
+  }
+}

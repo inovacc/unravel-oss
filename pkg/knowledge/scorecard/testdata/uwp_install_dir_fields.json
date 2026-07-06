@@ -1,0 +1,58 @@
+{
+  "_comment": "Wave-0 contract fixture for SCRG-01..05 input field shapes. Hand-crafted from PLAN.md verified <interfaces> block + real source_path strings from out/5319275A.WhatsAppDesktop-kb/knowledge.json. NOT a full DissectResult — only the fields SCRG-01..05 read. See 64-00-field-inventory.md for method rationale.",
+  "_grounded_in": "C:\\Program Files\\WindowsApps\\5319275A.WhatsAppDesktop_2.2616.100.0_x64__cv1g1gvanyjgm",
+  "_phase": "64-p58-deep-citations",
+  "_task": "64-00b (regenerated post-ManifestPath field add); P69-01 extended with deep-parse field presence flags (D-69-03)",
+  "msix_info": {
+    "manifest_path": "C:\\Program Files\\WindowsApps\\5319275A.WhatsAppDesktop_2.2616.100.0_x64__cv1g1gvanyjgm\\AppxManifest.xml",
+    "files": [
+      {"name": "WhatsApp.exe", "size": 12582912, "signed": true, "signer": "CN=WhatsApp LLC"},
+      {"name": "Native/cryptobinding.dll", "size": 524288, "signed": true, "signer": "CN=WhatsApp LLC"},
+      {"name": "Native/native_modules.dll", "size": 1048576, "signed": null, "signer": ""},
+      {"name": "wwwroot/index.html", "size": 4096, "signed": null, "signer": ""},
+      {"name": "wwwroot/app.js", "size": 2097152, "signed": null, "signer": ""},
+      {"name": "wwwroot/main.css", "size": 65536, "signed": null, "signer": ""},
+      {"name": "wwwroot/manifest.json", "size": 1024, "signed": null, "signer": ""},
+      {"name": "EBWebView/Default/IndexedDB/", "size": 0, "signed": null, "signer": ""},
+      {"name": "EBWebView/Default/Local Storage/leveldb/", "size": 0, "signed": null, "signer": ""}
+    ],
+    "capabilities": [
+      "internetClient",
+      "webcam",
+      "microphone",
+      "restricted:runFullTrust"
+    ],
+    "urls": [
+      "https://web.whatsapp.com",
+      "https://www.whatsapp.com"
+    ]
+  },
+  "js_analysis": {
+    "file": "wwwroot/app.js",
+    "urls": ["https://web.whatsapp.com/api/v1"],
+    "dangerous_calls": ["eval", "Function"],
+    "network_calls": ["fetch", "XMLHttpRequest"]
+  },
+  "webview2_info": {
+    "is_web_view2": true,
+    "profiles": [
+      {"name": "Default", "path": "EBWebView/Default"},
+      {"name": "Profile 1", "path": "EBWebView/Profile 1"}
+    ]
+  },
+  "dotnet_decompile": null,
+  "presence_flags": {
+    "msix_files_populated": true,
+    "msix_pe_entries_present": true,
+    "msix_source_entries_present": true,
+    "msix_manifest_path_populated": true,
+    "js_analysis_populated": true,
+    "webview2_profiles_populated": true,
+    "scrg_04_pe_imports_source_available": true,
+    "visual_elements": true,
+    "extensions_protocol": true,
+    "extensions_app_service_name": true,
+    "extensions_activatable_class_ids": true,
+    "extensions_share_target": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-05-02T00:00:00Z",
+  "framework": "electron",
+  "seams": [
+    {
+      "kind": "DT_NEEDED",
+      "confidence": "medium",
+      "framework": "electron",
+      "evidence": [{"type": "file-content", "path": "libdl.so.2"}],
+      "reachable_runtime": true,
+      "ptrace_eligible_binary": true,
+      "ptrace_flags": ["non_pie"],
+      "ptrace_eligible_binary_note": "host ptrace_scope policy (kernel.yama.ptrace_scope) applies at runtime; check via /proc/sys/kernel/yama/ptrace_scope before attempting attach"
+    }
+  ],
+  "summary": {"total_seams": 1, "by_kind": {"DT_NEEDED": 1}, "by_confidence": {"medium": 1}}
+}

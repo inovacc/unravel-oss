@@ -1,0 +1,16 @@
+# Unravel configuration template.
+# Copy this to your config location, typically:
+#   Windows: %LOCALAPPDATA%\Unravel\config.yaml
+#   Unix:    $XDG_CONFIG_HOME/unravel/config.yaml or ~/.config/unravel/config.yaml
+#
+# Normal KB setup does not require a database superuser. If the database and
+# app role already exist, point this file at the app DSN and run
+# `unravel setup kb` to store the password securely.
+
+database:
+  host: 127.0.0.1
+  port: 5432
+  user: unravel_app
+  password: <POSTGRES_PASSWORD>
+  dbname: unravel
+  sslmode: disable

@@ -1,0 +1,110 @@
+# Build artifacts
+/output/
+/dist/
+output.7z
+output_scan.json
+*.exe
+*.exe~
+# ...except checked-in binary test fixtures (stripped Go binaries for goresym pclntab recovery)
+!pkg/garble/goresym/testdata/*.exe
+NUL
+nul
+response.txt
+coverage.out
+coverage.html
+*.coverprofile
+
+# Reports and data (kept locally, not tracked)
+docs/reports/
+input/
+!**/testdata/input/
+report/
+teardown/
+debug/
+bin/
+/tools/
+# CLR no-.NET Docker gate is a tracked acceptance-proof harness, not a legacy tool.
+!/tools/clrgate/
+!/tools/clrgate/**
+docs/validations/
+
+# Legacy standalone tools (incorporated into unified CLI)
+hacks/
+/.scripts/
+
+# IDE
+.idea/
+
+# Secrets / local config
+.env
+.claude/settings.local.json
+.claude/worktrees/
+
+# Temp files
+*.7z
+*.zip
+*.txt
+!LICENSE
+!README.md
+!docs/**/*.md
+!cmd/testdata/**/*.txt
+!pkg/**/testdata/**/*.txt
+!internal/**/testdata/**/*.txt
+bypass.py
+
+# Analysis output (regenerated)
+output_analisis/
+dissect_npx/
+knowledge-cluely/
+cases/
+.scripts/
+
+# Operator-local KB outputs — keep out/reports/ trackable for v2.10 VALD evidence
+# (small sidecar SCORECARD.md / _score.json files); everything else under out/ is
+# per-target scratch (frequently >100 MB; do not push to GitHub).
+/out/*
+!/out/reports/
+
+# P65 origin-sync runbook ephemera
+.scripts/orgn-secrets.txt
+.scripts/logs/
+out/reports/_orgn_*
+out/orgn-analyze/
+
+# clean-room judge run artifacts (contain extracted app bodies)
+docs/quality/cleanroom-judge*/
+docs/quality/cleanroom-scorecard/
+
+# Specific problem directories (often locked or permission issues)
+/assets/plugin/skills/teardown/
+# Negated: TestScorecardHeatmap needs these sidecar fixtures tracked (the
+# generic `input/` rule above would otherwise drop them, breaking the test on
+# any fresh checkout).
+!/cmd/testdata/heatmap_golden/input/
+!/cmd/testdata/heatmap_golden/input/**
+/pkg/knowledge/scorecard/.scripts/
+/pkg/transpile/testdata/bin/
+/pkg/transpile/testdata/decompiler/input/
+
+# Superpowers SDD progress ledgers / session scratch (git-ignored scratch)
+/.superpowers/
+
+# Agent/session scratch wrongly written to repo root (belongs in .scripts/)
+/*.py
+/*.json
+!package.json
+!manifests/*.json
+!pkg/**/testdata/**/*.json
+/*.txt
+/*.ps1
+!README.md
+!CHANGELOG.md
+!docs/**/*.md
+*.log
+
+# Golden-test scratch output (written next to fixtures on run; never tracked)
+*.got
+
+# Source packages named debug/ (not runtime debug output)
+!pkg/debug/
+!pkg/transpile/core/debug/

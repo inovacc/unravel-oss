@@ -1,0 +1,25 @@
+{
+  "_comment": "Regression thresholds for Discord ASAR endpoint extraction (BUG-07). Live ASAR (~250 MB) is not committed; test reads it via UNRAVEL_DISCORD_ASAR env var or skips. Pre-fix run produced 1732 endpoints with ~60% noise from spec/comment hosts.",
+  "fixture_path_env": "UNRAVEL_DISCORD_ASAR",
+  "default_fixture_path": "C:\\Users\\dyamm\\AppData\\Local\\Discord\\app-1.0.9231\\resources\\app.asar",
+  "pre_fix_count": 1732,
+  "count_max": 200,
+  "denied_hosts": [
+    "w3.org",
+    "www.w3.org",
+    "w3c.github.io",
+    "crbug.com",
+    "spec.whatwg.org",
+    "fetch.spec.whatwg.org",
+    "html.spec.whatwg.org",
+    "tools.ietf.org",
+    "datatracker.ietf.org",
+    "developer.mozilla.org",
+    "dawn.googlesource.com",
+    "googlesource.com",
+    "gpuweb.github.io",
+    "nodejs.org",
+    "github.com"
+  ],
+  "min_classified_pct": 80
+}

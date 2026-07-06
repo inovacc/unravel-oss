@@ -1,0 +1,33 @@
+category: protocol
+applies_to: [whatsapp, teams, slack, linkedin, discord, outlook, telegram]
+facts:
+
+  - key: transport
+    value_format: enum:websocket|long_poll|grpc|webrtc|http2_stream|other|unknown
+    candidates_q: "WebSocket OR longPoll OR grpc OR EventSource OR XMLHttpRequest"
+    gap_prompt: |
+      What is the primary realtime transport between client and server?
+      Return one of: websocket, long_poll, grpc, webrtc, http2_stream,
+      other, unknown.
+
+  - key: push_channel_endpoint
+    value_format: string
+    candidates_q: "trouter OR push OR ws.whatsapp.net OR /push"
+    gap_prompt: |
+      Find the URL host (or path) of the push/notification channel the
+      client subscribes to. e.g. trouter.skype.com / web.whatsapp.net.
+
+  - key: history_backfill_api
+    value_function: string
+    candidates_q: "loadEarlierMsgs OR loadOlder OR fetchHistory OR getMessageHistory"
+    gap_prompt: |
+      Identify the function used to lazy-load historical messages on
+      scroll-up. Return "<module>.<function>" e.g.
+      "WAWebChatLoadMessages.loadEarlierMsgs" or "unknown".
+
+  - key: send_text_api
+    value_format: string
+    candidates_q: "sendText OR addAndSendMsg OR createMessage OR sendChatMessage"
+    gap_prompt: |
+      Identify the public function used to send a plain text message to a
+      chat. Return "<module>.<function>".

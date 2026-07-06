@@ -1,0 +1,369 @@
+// Copyright (c) 2026 Security Research
+//
+// Proto definitions for the unravel daemon gRPC API.
+
+syntax = "proto3";
+
+package unravel.v1;
+
+option go_package = "unravel/internal/gen/unravelv1";
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/duration.proto";
+
+// AnalysisService provides file detection, analysis, and dissection.
+service AnalysisService {
+  // Detect identifies a file's type, category, and confidence.
+  rpc Detect(DetectRequest) returns (DetectResponse);
+
+  // Dissect runs the full analysis pipeline on a file or directory.
+  rpc Dissect(DissectRequest) returns (DissectResponse);
+
+  // Analyze runs a security analysis on an Electron/Tauri app.
+  rpc Analyze(AnalyzeRequest) returns (AnalyzeResponse);
+
+  // Knowledge extracts structured knowledge from a dissect result.
+  rpc Knowledge(KnowledgeRequest) returns (KnowledgeResponse);
+
+  // Schema extracts application schema for cross-framework replication.
+  rpc Schema(SchemaRequest) returns (SchemaResponse);
+}
+
+// CertService provides certificate extraction and verification.
+service CertService {
+  // Info extracts PE/ELF certificates.
+  rpc Info(CertInfoRequest) returns (CertInfoResponse);
+
+  // Verify checks certificate validity and chain.
+  rpc Verify(CertVerifyRequest) returns (CertVerifyResponse);
+
+  // Compare compares certificates across two binaries.
+  rpc Compare(CertCompareRequest) returns (CertCompareResponse);
+
+  // Scan scans a directory for signed binaries.
+  rpc Scan(CertScanRequest) returns (CertScanResponse);
+}
+
+// AndroidService provides Android APK analysis.
+service AndroidService {
+  // Info returns APK metadata.
+  rpc Info(AndroidInfoRequest) returns (AndroidInfoResponse);
+
+  // Extract extracts APK contents to a directory.
+  rpc Extract(AndroidExtractRequest) returns (AndroidExtractResponse);
+
+  // Verify verifies APK signature schemes.
+  rpc Verify(AndroidVerifyRequest) returns (AndroidVerifyResponse);
+
+  // Manifest parses AndroidManifest.xml.
+  rpc Manifest(AndroidManifestRequest) returns (AndroidManifestResponse);
+
+  // Secrets scans for hardcoded API keys and tokens.
+  rpc Secrets(AndroidSecretsRequest) returns (AndroidSecretsResponse);
+
+  // Smali disassembles DEX bytecode to Smali assembly.
+  rpc Smali(AndroidSmaliRequest) returns (AndroidSmaliResponse);
+}
+
+// JavaService provides Java archive analysis and decompilation.
+service JavaService {
+  // Info returns class/archive metadata.
+  rpc Info(JavaInfoRequest) returns (JavaInfoResponse);
+
+  // Decompile decompiles Java class files to source.
+  rpc Decompile(JavaDecompileRequest) returns (JavaDecompileResponse);
+}
+
+// NPMService provides npm package analysis.
+service NPMService {
+  // Info fetches npm registry metadata.
+  rpc Info(NPMInfoRequest) returns (NPMInfoResponse);
+
+  // Analyze runs full security analysis on a package.
+  rpc Analyze(NPMAnalyzeRequest) returns (NPMAnalyzeResponse);
+
+  // Download downloads and extracts an npm package.
+  rpc Download(NPMDownloadRequest) returns (NPMDownloadResponse);
+}
+
+// DaemonService provides daemon lifecycle management.
+service DaemonService {
+  // Status returns the daemon's current status.
+  rpc Status(StatusRequest) returns (StatusResponse);
+
+  // Shutdown gracefully stops the daemon.
+  rpc Shutdown(ShutdownRequest) returns (ShutdownResponse);
+
+  // Ping keeps the daemon alive (resets idle timer).
+  rpc Ping(PingRequest) returns (PingResponse);
+}
+
+// --- Common types ---
+
+// FileType identifies the detected file format.
+enum FileType {
+  FILE_TYPE_UNKNOWN = 0;
+  FILE_TYPE_PE = 1;
+  FILE_TYPE_ELF = 2;
+  FILE_TYPE_MACHO = 3;
+  FILE_TYPE_APK = 4;
+  FILE_TYPE_ASAR = 5;
+  FILE_TYPE_DEX = 6;
+  FILE_TYPE_NPM_PACKAGE = 7;
+  FILE_TYPE_MCP_SERVER = 8;
+  FILE_TYPE_JAR = 9;
+  FILE_TYPE_WAR = 10;
+  FILE_TYPE_EAR = 11;
+  FILE_TYPE_IPA = 12;
+  FILE_TYPE_MSI = 13;
+  FILE_TYPE_MSIX = 14;
+  FILE_TYPE_DEB = 15;
+  FILE_TYPE_RPM = 16;
+  FILE_TYPE_NSIS = 17;
+  FILE_TYPE_GO_BINARY = 18;
+  FILE_TYPE_DOTNET_APP = 19;
+  FILE_TYPE_ELECTRON_APP = 20;
+  FILE_TYPE_TAURI_APP = 21;
+  FILE_TYPE_BUN_STANDALONE = 22;
+  FILE_TYPE_PYINSTALLER = 23;
+  FILE_TYPE_NODE_MODULE = 24;
+  FILE_TYPE_SOURCE_MAP = 25;
+}
+
+enum Confidence {
+  CONFIDENCE_UNKNOWN = 0;
+  CONFIDENCE_LOW = 1;
+  CONFIDENCE_MEDIUM = 2;
+  CONFIDENCE_HIGH = 3;
+  CONFIDENCE_CERTAIN = 4;
+}
+
+// --- Detection ---
+
+message DetectRequest {
+  string path = 1;
+}
+
+message DetectResponse {
+  FileType file_type = 1;
+  string category = 2;
+  Confidence confidence = 3;
+  string details = 4;
+  string name = 5;
+  int64 size = 6;
+}
+
+// --- Dissect ---
+
+message DissectRequest {
+  string path = 1;
+  string output_dir = 2;
+  bool verbose = 3;
+  bool ai = 4;
+  bool beautify = 5;
+  bool disassemble = 6;
+  bool deobfuscate = 7;
+}
+
+message DissectResponse {
+  // JSON-encoded DissectResult from pkg/dissect
+  google.protobuf.Struct result = 1;
+  google.protobuf.Duration duration = 2;
+}
+
+// --- Analyze ---
+
+message AnalyzeRequest {
+  string path = 1;
+  string app_type = 2;  // "electron" or "tauri"
+  string manifest = 3;  // custom manifest path
+  bool json = 4;
+}
+
+message AnalyzeResponse {
+  google.protobuf.Struct result = 1;
+}
+
+// --- Knowledge ---
+
+message KnowledgeRequest {
+  string path = 1;
+  string output_dir = 2;
+}
+
+message KnowledgeResponse {
+  google.protobuf.Struct result = 1;
+}
+
+// --- Schema ---
+
+message SchemaRequest {
+  string path = 1;
+  bool ai = 2;
+}
+
+message SchemaResponse {
+  google.protobuf.Struct result = 1;
+}
+
+// --- Cert ---
+
+message CertInfoRequest {
+  string path = 1;
+}
+
+message CertInfoResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message CertVerifyRequest {
+  string path = 1;
+}
+
+message CertVerifyResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message CertCompareRequest {
+  string path_a = 1;
+  string path_b = 2;
+}
+
+message CertCompareResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message CertScanRequest {
+  string directory = 1;
+}
+
+message CertScanResponse {
+  google.protobuf.Struct result = 1;
+}
+
+// --- Android ---
+
+message AndroidInfoRequest {
+  string apk_path = 1;
+}
+
+message AndroidInfoResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message AndroidExtractRequest {
+  string apk_path = 1;
+  string output_dir = 2;
+}
+
+message AndroidExtractResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message AndroidVerifyRequest {
+  string apk_path = 1;
+}
+
+message AndroidVerifyResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message AndroidManifestRequest {
+  string apk_path = 1;
+}
+
+message AndroidManifestResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message AndroidSecretsRequest {
+  string apk_path = 1;
+}
+
+message AndroidSecretsResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message AndroidSmaliRequest {
+  string apk_path = 1;
+  string output_dir = 2;
+}
+
+message AndroidSmaliResponse {
+  int32 dex_files = 1;
+  int32 total_methods = 2;
+  google.protobuf.Struct methods = 3;
+}
+
+// --- Java ---
+
+message JavaInfoRequest {
+  string path = 1;
+}
+
+message JavaInfoResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message JavaDecompileRequest {
+  string path = 1;
+  string output_dir = 2;
+}
+
+message JavaDecompileResponse {
+  google.protobuf.Struct result = 1;
+}
+
+// --- NPM ---
+
+message NPMInfoRequest {
+  string package_name = 1;
+  string version = 2;
+}
+
+message NPMInfoResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message NPMAnalyzeRequest {
+  string path = 1;
+}
+
+message NPMAnalyzeResponse {
+  google.protobuf.Struct result = 1;
+}
+
+message NPMDownloadRequest {
+  string package_name = 1;
+  string version = 2;
+  string output_dir = 3;
+}
+
+message NPMDownloadResponse {
+  string extracted_path = 1;
+}
+
+// --- Daemon ---
+
+message StatusRequest {}
+
+message StatusResponse {
+  int32 pid = 1;
+  int32 port = 2;
+  string started = 3;
+  string version = 4;
+  string uptime = 5;
+  google.protobuf.Duration idle_timeout = 6;
+}
+
+message ShutdownRequest {}
+
+message ShutdownResponse {
+  bool ok = 1;
+}
+
+message PingRequest {}
+
+message PingResponse {
+  string pong = 1;
+}

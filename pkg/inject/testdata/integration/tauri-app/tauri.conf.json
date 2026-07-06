@@ -1,0 +1,26 @@
+{
+  "build": {
+    "devPath": "http://localhost:1420",
+    "distDir": "../dist"
+  },
+  "tauri": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Fixture",
+        "devTools": true
+      }
+    ],
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "open": true,
+        "execute": true
+      },
+      "fs": {
+        "readFile": true,
+        "writeFile": true
+      }
+    }
+  }
+}

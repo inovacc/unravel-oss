@@ -1,0 +1,12 @@
+[
+  {
+    "dom_path": "html > body > div#app > main",
+    "bounds": {"x": 0, "y": 0, "w": 1280, "h": 720, "visible": true, "z_index": "0"},
+    "computed_style": {"display": "block", "background-color": "rgb(255, 255, 255)", "font-size": "16px"}
+  },
+  {
+    "dom_path": "html > body > div#app > main > h1",
+    "bounds": {"x": 16, "y": 16, "w": 200, "h": 32, "visible": true},
+    "computed_style": {"display": "block", "font-weight": "700"}
+  }
+]

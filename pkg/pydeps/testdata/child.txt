@@ -1,0 +1,2 @@
+# child requirements pulled via -r
+pyyaml==6.0

@@ -1,0 +1,2 @@
+DROP INDEX IF EXISTS modules_topic_idx;
+ALTER TABLE modules DROP COLUMN IF EXISTS topic;

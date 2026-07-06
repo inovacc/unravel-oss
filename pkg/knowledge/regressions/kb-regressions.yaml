@@ -1,0 +1,68 @@
+# Copyright (c) 2026 Security Research
+#
+# kb-regressions.yaml — KB diff regression rubric (Phase 07-03 / D-10).
+#
+# Severity vocabulary:  BLOCK | FLAG | PASS
+# Dimensions:           permissions | security_config | structural | text
+#
+# Security reviewers MUST audit changes to this file. The Go layer
+# (pkg/knowledge/regressions/) intentionally embeds this YAML and treats it
+# as the single source of truth.
+schema_version: 1
+rules:
+  - id: csp-unsafe-inline-added
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "security/config.json:csp"
+      condition: added_value_contains
+      value: "unsafe-inline"
+  - id: csp-unsafe-eval-added
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "security/config.json:csp"
+      condition: added_value_contains
+      value: "unsafe-eval"
+  - id: dangerous-permission-added
+    dimension: permissions
+    severity: BLOCK
+    match:
+      key: "android/manifest.json:permissions[*].dangerous"
+      condition: true_added
+  - id: sandbox-flag-removed
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "security/config.json:settings[name=sandbox]"
+      condition: value_changed_to:false
+  - id: contextisolation-disabled
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "security/config.json:webPreferences[name=contextIsolation]"
+      condition: value_changed_to:false
+  - id: nodeintegration-enabled
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "security/config.json:webPreferences[name=nodeIntegration]"
+      condition: value_changed_to:true
+  - id: telemetry-sdk-added
+    dimension: structural
+    severity: FLAG
+    match:
+      key: "telemetry/services.json"
+      condition: array_length_increased
+  - id: cert-pinning-removed
+    dimension: security_config
+    severity: BLOCK
+    match:
+      key: "android/network_security_config.json:pin_set"
+      condition: removed
+  - id: external-api-endpoint-added
+    dimension: structural
+    severity: FLAG
+    match:
+      key: "communication/endpoints.json"
+      condition: array_length_increased

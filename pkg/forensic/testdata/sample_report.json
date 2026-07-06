@@ -1,0 +1,42 @@
+{
+  "app_id": "com.example.sample",
+  "package_name": "com.example.sample",
+  "app_name": "Sample App",
+  "version": "1.0.0",
+  "size": 12345,
+  "network": null,
+  "secrets": null,
+  "telemetry": null,
+  "curl_scripts": [
+    {
+      "name": "auth-login",
+      "description": "Login endpoint",
+      "category": "auth",
+      "command": "curl -X POST https://api.example.com/login",
+      "url": "https://api.example.com/login",
+      "method": "POST"
+    }
+  ],
+  "risk_score": 75,
+  "risk_level": "high",
+  "findings": [
+    {
+      "category": "hardcoded_credential",
+      "title": "Hardcoded API key in source",
+      "description": "An API key was found embedded in a JS bundle.",
+      "severity": "BLOCK"
+    },
+    {
+      "category": "csp_relaxation",
+      "title": "CSP allows unsafe-inline",
+      "description": "Content-Security-Policy permits inline scripts.",
+      "severity": "FLAG"
+    },
+    {
+      "category": "telemetry_sdk_added",
+      "title": "Analytics SDK present",
+      "description": "Standard analytics SDK detected; no exfiltration observed.",
+      "severity": "PASS"
+    }
+  ]
+}

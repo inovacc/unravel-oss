@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "script": "mac-LC_LOAD_DYLIB-3092366f.js",
+  "hooks": [
+    {
+      "id": "macos-3092366f",
+      "description": "unravel-autogen-v1: {\"seam_id\":\"3092366f\",\"platform\":\"macos\",\"target_path\":\"/usr/lib/libSystem.B.dylib\",\"tag\":\"LC_LOAD_DYLIB\",\"expected_events\":[\"hook_loaded\",\"dlopen_intercepted\"],\"severity\":\"high\"}",
+      "criteria": [
+        {
+          "op": "present",
+          "target": "seam_id"
+        }
+      ]
+    }
+  ]
+}

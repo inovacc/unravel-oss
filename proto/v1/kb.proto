@@ -1,0 +1,164 @@
+// Copyright (c) 2026 Security Research
+//
+// Proto definitions for the unravel KBService gRPC API.
+// Mirrors the CLI Result struct shapes defined in cmd/kb_*.go (D-33-INPUT-MATCH-CLI).
+// No connection-string field appears in any request message; the Postgres
+// connection string is resolved server-side at startup from the
+// UNRAVEL_KB_CONN env var (see phase 33 design notes).
+
+syntax = "proto3";
+
+package unravel.v1;
+
+option go_package = "unravel/internal/gen/unravelv1";
+
+// KBService exposes the 5 KB MCP tools that back unravel_kb_apps,
+// unravel_kb_timeline, unravel_kb_diff, unravel_kb_search, and
+// unravel_kb_capture.
+service KBService {
+  // Apps lists known KB apps with optional filters.
+  rpc Apps(AppsRequest) returns (AppsResponse);
+  // Timeline returns the per-epoch capture history for one KB.
+  rpc Timeline(TimelineRequest) returns (TimelineResponse);
+  // Diff returns a categorized diff between two epochs of the same KB.
+  rpc Diff(DiffRequest) returns (DiffResponse);
+  // Search runs a trigram fuzzy search across module bodies.
+  rpc Search(SearchRequest) returns (SearchResponse);
+  // Capture ingests a target into the KB, allocating a new epoch
+  // (synchronous; default timeout 600s, range 60-1800s — D-33-CAPTURE-SYNC).
+  rpc Capture(CaptureRequest) returns (CaptureResponse);
+}
+
+// ---- Apps ----
+
+message AppsRequest {
+  string platform = 1;        // app platform filter (android|electron|tauri|dotnet|ios|...)
+  string framework = 2;       // detected framework filter
+  string risk = 3;             // risk-level filter (low|medium|high|critical)
+  repeated string tag = 4;    // free-form label filter (repeatable)
+  string since = 5;            // duration string ("7d") or ISO date
+  int32 limit = 6;             // max rows (default 100, max 500)
+  bool include_aliases = 7;   // include alias kb_ids in addition to canonical
+}
+
+message AppRow {
+  string kb_id = 1;
+  string canonical_name = 2;
+  string display_name = 3;
+  string platform = 4;
+  string publisher_cn = 5;
+  string framework = 6;
+  string package_id = 7;
+  repeated string tags = 8;
+  int32 latest_epoch = 9;
+  int32 latest_risk_score = 10;
+  string latest_risk_level = 11;
+  int32 latest_depth_score = 12;
+}
+
+message AppsResponse {
+  int32 schema_version = 1;
+  repeated AppRow apps = 2;
+  int32 total = 3;
+}
+
+// ---- Timeline ----
+
+message TimelineRequest {
+  string kb_id = 1;            // canonical or alias kb_id (alias-resolved server-side)
+  bool reverse = 2;            // emit epochs newest-first
+}
+
+message EpochRow {
+  int64 epoch = 1;
+  int64 captured_at = 2;        // unix ms
+  string app_version = 3;
+  string risk_level = 4;
+  int32 depth_score = 5;
+  int32 modules_indexed = 6;
+  int32 modules_delta = 7;
+  map<string, int32> diff_counts = 8; // per-category diff counts vs previous epoch
+}
+
+message TimelineResponse {
+  int32 schema_version = 1;
+  string kb_id = 2;
+  repeated EpochRow epochs = 3;
+}
+
+// ---- Diff ----
+
+message DiffRequest {
+  string kb_id = 1;
+  int64 from_epoch = 2;
+  int64 to_epoch = 3;
+  repeated string category = 4; // optional whitelist of categories
+}
+
+message ChangeRow {
+  string category = 1;          // file|dep|capability|url|risk|cert|fact|module|component
+  string change_type = 2;       // added|removed|modified
+  string identifier = 3;
+  string payload_json = 4;      // opaque per-category payload (JSON-encoded)
+}
+
+message DiffResponse {
+  int32 schema_version = 1;
+  string kb_id = 2;
+  int64 from_epoch = 3;
+  int64 to_epoch = 4;
+  repeated ChangeRow changes = 5;
+  bool capped = 6;              // true when long-range cap (20 epochs) tripped
+  string cap_message = 7;       // human-readable cap explanation
+}
+
+// ---- Search ----
+
+message SearchRequest {
+  string query = 1;
+  string app = 2;               // kb_id or canonical_name filter
+  string component = 3;         // component bucket filter
+  string fact_type = 4;         // fact-type filter
+  string lang = 5;              // language filter
+  string since = 6;             // duration string or ISO date
+  int32 limit = 7;
+  string cursor = 8;            // opaque base64; tampered → restart from beginning
+}
+
+message SearchHit {
+  int64 module_id = 1;
+  string name = 2;
+  string body_excerpt_snippet = 3;
+  float similarity = 4;
+  string app_kb_id = 5;
+  string app_display_name = 6;
+  int64 captured_at = 7;
+  string lang = 8;
+  string component = 9;
+}
+
+message SearchResponse {
+  int32 schema_version = 1;
+  repeated SearchHit hits = 2;
+  string next_cursor = 3;
+}
+
+// ---- Capture ----
+
+message CaptureRequest {
+  string path = 1;              // absolute filesystem path (D-33-CAPTURE-PATH-VALIDATION)
+  repeated string tag = 2;
+  string reason = 3;
+  string by = 4;
+  bool force = 5;               // bypass idempotency check
+  int32 timeout_seconds = 6;    // 0 = default 600s; allowed range 60-1800
+}
+
+message CaptureResponse {
+  int32 schema_version = 1;
+  string kb_id = 2;
+  int64 epoch = 3;
+  string status = 4;            // ok|skipped|error
+  bool skipped = 5;              // true when idempotency hit
+  string reason = 6;
+}

@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-05-02T00:00:00Z",
+  "framework": "macos",
+  "seams": [],
+  "summary": {"total_seams": 1, "by_kind": {"LC_LOAD_DYLIB": 1}, "by_confidence": {"high": 1}},
+  "arches": [
+    {
+      "arch": "arm64",
+      "seams": [
+        {
+          "kind": "LC_LOAD_DYLIB",
+          "confidence": "high",
+          "framework": "macos",
+          "evidence": [{"type": "file-content", "path": "/usr/lib/libSystem.B.dylib"}],
+          "reachable_runtime": true,
+          "signing_blocks": ["LC_CODE_SIGNATURE"]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+[tool.poetry]
+name = "demo"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.30.0"
+flask = ">=2.3,<3"
+internal-thing = { git = "https://internal.corp/repo.git", branch = "main" }
